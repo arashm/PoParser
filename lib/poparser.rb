@@ -1,6 +1,7 @@
-
+# External Libs
 require 'parslet'
 
+# Local files
 require 'poparser/constants'
 require 'poparser/parser'
 require 'poparser/transformer'
