@@ -29,6 +29,8 @@ describe PoParser::Entry do
 
   it 'checks if the entry is translated' do
     expect(@entry.translated?).to be_false
+    @entry.translate ''
+    expect(@entry.translated?).to be_false
     @entry.translate 'translated'
     expect(@entry.complete?).to be_true
   end
