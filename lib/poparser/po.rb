@@ -77,6 +77,17 @@ module PoParser
       }
     end
 
+    # Converts Po file to an hashes of entries
+    # 
+    # @return [Array] array of hashes of entries
+    def to_h
+      array = []
+      @entries.each do |entry|
+        array << entry.to_h
+      end
+      array
+    end
+
     def each
       @entries.each do |entry|
         yield entry
