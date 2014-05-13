@@ -1,8 +1,5 @@
 module PoParser
   class Entry
-    LABELS = %i{refrence extracted_comment flag previous_untraslated_string translator_comment
-      msgid msgid_plural msgstr msgstr_plural multiline_msgstr msgctxt}
-    
     LABELS.each do |label|
       attr_accessor label
     end

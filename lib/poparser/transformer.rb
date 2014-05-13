@@ -1,10 +1,7 @@
 module PoParser
   # Converts the array returned from {Parser} to a useable hash
   class Transformer < Parslet::Transform
-    RULES = %i(translator_comment refrence extracted_comment flag previous_untraslated_string
-      msgid msgid_plural msgstr msgstr_plural msgctxt)
-
-    RULES.each do |rule_name|
+    LABELS.each do |rule_name|
       rule(rule_name => simple(:val)) { {"#{rule_name}".to_sym => val.to_s.chomp } }
     end
 
