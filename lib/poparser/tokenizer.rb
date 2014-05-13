@@ -5,26 +5,24 @@ module PoParser
   class Tokenizer
     def initialize
       @parser = Parser.new
+      @po     = Po.new
     end
 
-    def extract_blocks(path)
+    def extract_entries(path)
       block = ''
-      arr = []
-      id = 1
       File.open(path, 'r') do |f|
         f.each_line do |line|
           unless line.match("^\n") || f.eof?
             block += line
           else
             parsed_hash = @parser.parse(block)
-            transformed = Transformer.new.transform(parsed_hash).merge!({id: id})
-            arr << transformed
+            transformed = Transformer.new.transform(parsed_hash)
+            @po << transformed
             block = ''
-            id += 1
           end
         end
-        arr
       end
+      @po
     end
 
   end
