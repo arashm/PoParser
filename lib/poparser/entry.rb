@@ -13,8 +13,13 @@ module PoParser
     
     alias_method :translate, :msgstr=
 
+    def untranslated?
+      @msgstr.nil? || @msgstr == ''
+    end
+    alias_method :incomplete? , :untranslated?
+
     def translated?
-      @msgstr != nil
+      not untranslated?
     end
     alias_method :complete? , :translated?
 
