@@ -10,5 +10,9 @@ require 'poparser/po'
 require 'poparser/version'
 
 module PoParser
-  # Your code goes here...
+  class << self
+    def parse(path)
+      Tokenizer.new.extract_entries(path)
+    end
+  end
 end
