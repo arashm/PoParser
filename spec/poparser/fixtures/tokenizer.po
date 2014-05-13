@@ -1,0 +1,7 @@
+#: templates:105
+msgid "Afrikaans"
+msgstr "آفریقایی"
+
+#, fuzzy
+msgid "Afrikaans"
+msgstr "آفریقایی"

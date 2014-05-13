@@ -1,0 +1,62 @@
+module PoParser
+  class Parser < Parslet::Parser
+    root(:document)
+
+    rule(:document) { lines.repeat }
+    rule(:lines)    { comments | entries }
+
+    # Comments
+    rule(:comments) do
+      refrence |
+      extracted_comment | flag |
+      previous_untraslated_string |
+      translator_comment
+    end
+
+    rule(:translator_comment)         { spaced('#') >> comment_text_line.as(:translator_comment) }
+    rule(:extracted_comment)          { spaced('#.') >> comment_text_line.as(:extracted_comment) }
+    rule(:refrence)                   { spaced('#:') >> comment_text_line.as(:refrence) }
+    rule(:flag)                       { spaced('#,') >> comment_text_line.as(:flag) }
+    rule(:previous_untraslated_string){ spaced('#|') >> comment_text_line.as(:previous_untraslated_string) }
+
+    # Entries
+    rule(:entries) do
+      msgid | msgid_plural | msgstr | msgstr_plural | multiline_msgstr | msgctxt
+    end
+
+    rule(:msgid)           { spaced('msgid') >> msg_text_line.as(:msgid) }
+    rule(:msgid_plural)    { spaced('msgid_plural') >> msg_text_line.as(:msgid_plural) }
+    
+    rule(:msgstr)          { spaced('msgstr') >> msg_text_line.as(:msgstr) }
+    rule(:msgstr_plural)   { str('msgstr') >> bracketed(match["[0-9]"]) >> space? >> msg_text_line.as(:msgstr_plural) }
+    rule(:multiline_msgstr){ msg_text_line.as(:msgstr) }
+    rule(:msgctxt)         { spaced('msgctxt') >> msg_text_line.as(:msgctxt) }
+
+    # Helpers
+    rule(:space)       { match['[^\S\n]'] } #match only whitespace and not newline
+    rule(:space?)      { space.maybe }
+    rule(:newline)     { match["\n"] }
+    rule(:eol)         { newline | any.absent? }
+    rule(:character)   { escaped | text }
+    rule(:text)        { any }
+    rule(:escaped)     { str('\\') >> any }
+    rule(:msg_line_end){ str('"') >> eol }
+
+    rule(:comment_text_line) do
+      (eol.absent? >> character).repeat >> eol
+    end
+
+    rule(:msg_text_line) do
+      str('"') >> (msg_line_end.absent? >> character).repeat >> msg_line_end
+    end
+
+    def bracketed(atom)
+      str('[') >> atom >> str(']')
+    end
+
+    def spaced(character)
+      str(character) >> space?
+    end
+  end
+end
+
