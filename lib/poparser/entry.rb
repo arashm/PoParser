@@ -4,6 +4,7 @@ module PoParser
       attr_accessor label
     end
 
+    # TODO: raise error if a label is not known
     def initialize(args= {})
       LABELS.each do |label|
         instance_variable_set("@#{label.to_s}", args.fetch(label, nil))
