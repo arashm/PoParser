@@ -43,11 +43,11 @@ module PoParser
     rule(:msg_line_end){ str('"') >> eol }
 
     rule(:comment_text_line) do
-      (eol.absent? >> character).repeat.as(:text) >> eol
+      (eol.absent? >> character).repeat.maybe.as(:text) >> eol
     end
 
     rule(:msg_text_line) do
-      str('"') >> (msg_line_end.absent? >> character).repeat.as(:text) >> msg_line_end
+      str('"') >> (msg_line_end.absent? >> character).repeat.maybe.as(:text) >> msg_line_end
     end
 
     def bracketed(atom)
