@@ -21,16 +21,20 @@ module PoParser
 
     # Entries
     rule(:entries) do
-      msgid | msgid_plural | msgstr | msgstr_plural | multiline_msgstr | msgctxt
+      msgid.as(:msgid) | 
+      msgid_plural.as(:msgid_plural) |
+      msgstr.as(:msgstr) |
+      msgstr_plural.as(:msgstr_plural) |
+      msgctxt.as(:msgctxt)
     end
 
-    rule(:msgid)           { spaced('msgid') >> msg_text_line.as(:msgid) }
-    rule(:msgid_plural)    { spaced('msgid_plural') >> msg_text_line.as(:msgid_plural) }
+    rule(:multiline)    { str('"').present? >> msg_text_line.repeat.maybe }
+    rule(:msgid)        { spaced('msgid') >> msg_text_line >> multiline.repeat }
+    rule(:msgid_plural) { spaced('msgid_plural') >> msg_text_line >> multiline.repeat }
     
-    rule(:msgstr)          { spaced('msgstr') >> msg_text_line.as(:msgstr) }
-    rule(:msgstr_plural)   { str('msgstr') >> bracketed(match["[0-9]"]) >> space? >> msg_text_line.as(:msgstr_plural) }
-    rule(:multiline_msgstr){ msg_text_line.as(:msgstr) }
-    rule(:msgctxt)         { spaced('msgctxt') >> msg_text_line.as(:msgctxt) }
+    rule(:msgstr)       { spaced('msgstr') >> msg_text_line >> multiline.repeat }
+    rule(:msgstr_plural){ str('msgstr') >> bracketed(match["[0-9]"]) >> space? >> msg_text_line >> multiline.repeat }
+    rule(:msgctxt)      { spaced('msgctxt') >> msg_text_line >> multiline.repeat }
 
     # Helpers
     rule(:space)       { match['[^\S\n]'] } #match only whitespace and not newline

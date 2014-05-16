@@ -1,0 +1,6 @@
+msgid ""
+"first"
+"second"
+msgstr ""
+"aval"
+"dovom"

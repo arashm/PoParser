@@ -40,6 +40,7 @@ describe PoParser::Parser do
   context 'Entries' do
     let(:msgid) { po.msgid }
     let(:msgstr){ po.msgstr }
+    let(:pofile){ Pathname.new('spec/poparser/fixtures/multiline.po').realpath }
 
     it 'parses msgid' do
       msgid.should parse "msgid \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
@@ -49,6 +50,12 @@ describe PoParser::Parser do
     it 'parses msgstr' do
       msgstr.should parse "msgstr \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
       msgstr.should parse "msgstr \"فعالیت نامعتبر. شاید یک نفر دیگر دقیقا قبل از شما یک فعالیت دیگر ارسال کرده ۱۲۳۱۲۳۱safda \"\n"
+    end
+
+    it 'parses multiline entries' do
+      data = pofile.read
+      result = [{:msgid=>[{:text=>""}, {:text=>"first"}, {:text=>"second"}]}, {:msgstr=>[{:text=>""}, {:text=>"aval"}, {:text=>"dovom"}]}]
+      expect(po.parse data).to eq(result)
     end
   end
 
