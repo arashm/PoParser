@@ -63,4 +63,22 @@ describe PoParser::Entry do
       expect(@entry.flag).to eq('python-format')
     end
   end
+
+  context 'Convertion to string' do
+    it 'should be able to show string representaion of entries' do
+      @entry.flag = 'fuzzy'
+      @entry.msgid = 'string'
+      @entry.msgstr = 'reshte'
+      result = "#, fuzzy\nmsgid \"string\"\nmsgstr \"reshte\""
+      expect(@entry.to_s).to eq result
+    end
+
+    it 'convert multiline entries to string' do
+      @entry.flag = 'fuzzy'
+      @entry.msgid = ['', 'first line', 'second line']
+      @entry.msgstr = ['', 'first line', 'second line']
+      result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
+      expect(@entry.to_s).to eq(result)
+    end
+  end
 end
