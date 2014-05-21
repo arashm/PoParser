@@ -10,12 +10,4 @@ describe PoParser::Tokenizer do
       token.extract_entries(po_file).to_h
     ).to eq(result)
   end
-
-  # it 's cool' do
-  #   po_file2 = Pathname.new('spec/poparser/fixtures/multiline.po').realpath
-  #   token.extract_entries(po_file2).entries.each do |entry|
-  #     ap entry.to_h
-  #     ap entry.to_s
-  #   end
-  # end
 end
