@@ -3,6 +3,8 @@ module PoParser
   # 
   class Po
     include Enumerable
+    attr_reader :entries
+    alias_method :all, :entries
 
     def initialize
       @entries = []
