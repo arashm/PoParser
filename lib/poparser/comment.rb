@@ -1,5 +1,7 @@
 module PoParser
   class Comment
+    attr_accessor :type, :str
+
     def initialize(type, str)
       @type = type
       @str  = str
@@ -10,9 +12,9 @@ module PoParser
       if @str.is_a? Array
         string = []
         @str.each do |str|
-          string << "#{COMMENTS_LABELS[@type]} #{str}"
+          string << "#{COMMENTS_LABELS[@type]} #{str}\n"
         end
-        return string.join("\n")
+        return string.join
       else
         "#{COMMENTS_LABELS[@type]} #{@str}\n"
       end

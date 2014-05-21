@@ -24,7 +24,7 @@ describe PoParser::Entry do
 
   it 'should translate the entry' do
     @entry.translate ('this entry is translated')
-    expect(@entry.msgstr).to eq 'this entry is translated'
+    expect(@entry.msgstr.to_s).to eq 'this entry is translated'
   end
 
   it 'checks if the entry is translated' do
@@ -69,14 +69,14 @@ describe PoParser::Entry do
       @entry.flag = 'fuzzy'
       @entry.msgid = 'string'
       @entry.msgstr = 'reshte'
-      result = "#, fuzzy\nmsgid \"string\"\nmsgstr \"reshte\""
+      result = "#, fuzzy\nmsgid \"string\"\nmsgstr \"reshte\"\n"
       expect(@entry.to_s).to eq result
     end
 
     it 'convert multiline entries to string' do
       @entry.flag = 'fuzzy'
-      @entry.msgid = ['', 'first line', 'second line']
-      @entry.msgstr = ['', 'first line', 'second line']
+      @entry.msgid = ['first line', 'second line']
+      @entry.msgstr = ['first line', 'second line']
       result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
       expect(@entry.to_s).to eq(result)
     end
