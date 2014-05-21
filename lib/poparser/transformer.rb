@@ -1,9 +1,7 @@
 module PoParser
   # Converts the array returned from {Parser} to a useable hash
   class Transformer < Parslet::Transform
-    LABELS.each do |rule_name|
-      rule(rule_name => subtree(:val)) { {"#{rule_name}".to_sym => val[:text].to_s.chomp } }
-    end
+    rule(:text => simple(:txt)) { txt.to_s.chomp }
 
     def initialize
       @hash = {}
