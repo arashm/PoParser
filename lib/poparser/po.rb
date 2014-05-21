@@ -90,6 +90,17 @@ module PoParser
       array
     end
 
+    # Shows a String representation of the Po file
+    # 
+    # @return [String]
+    def to_s
+      array = []
+      @entries.each do |entry|
+        array << entry.to_s
+      end
+      array.join("\n")
+    end
+
     def each
       @entries.each do |entry|
         yield entry
