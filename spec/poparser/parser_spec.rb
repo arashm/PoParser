@@ -57,6 +57,12 @@ describe PoParser::Parser do
       result = [{:msgid=>[{:text=>""}, {:text=>"first"}, {:text=>"second"}]}, {:msgstr=>[{:text=>""}, {:text=>"aval"}, {:text=>"dovom"}]}]
       expect(po.parse data).to eq(result)
     end
+
+    it 'parses plural msgstr entries' do
+      str = "msgstr[0] \"\""
+      result = [{:msgstr_plural=>{:plural_id=>"0", :text=>""}}]
+      expect(po.parse(str)).to eq(result)
+    end
   end
 
 end

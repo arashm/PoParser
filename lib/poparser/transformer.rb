@@ -1,6 +1,10 @@
 module PoParser
   # Converts the array returned from {Parser} to a useable hash
   class Transformer < Parslet::Transform
+    rule(:msgstr_plural => subtree(:x)) do
+      { "msgstr[#{x[:plural_id]}]".to_sym => x[:text] }
+    end
+
     rule(:text => simple(:txt)) { txt.to_s.chomp }
 
     def initialize
