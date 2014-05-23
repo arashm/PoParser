@@ -9,21 +9,28 @@ module PoParser
     end
 
     def extract_entries(path)
+      @po.path = path
       block = ''
       File.open(path, 'r') do |f|
         f.each_line do |line|
-          unless line.match("^\n") || f.eof?
-            block += line
-          else
-            parsed_hash = @parser.parse(block)
-            transformed = Transformer.new.transform(parsed_hash)
-            @po << transformed
+          if line.match(/^\n$/)
+            @po << parse_block(block)
             block = ''
+          elsif f.eof?
+            block += line
+            @po << parse_block(block)
+          else
+            block += line
           end
         end
       end
       @po
     end
 
+  private
+    def parse_block(block)
+      parsed_hash = @parser.parse(block)
+      Transformer.new.transform(parsed_hash)
+    end
   end
 end
