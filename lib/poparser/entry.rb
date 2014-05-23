@@ -13,6 +13,10 @@ module PoParser
           instance_variable_set "@#{type.to_s}".to_sym, Comment.new(type, string)
         elsif ENTRIES_LABELS.include? type
           instance_variable_set "@#{type.to_s}".to_sym, Message.new(type, string)
+        elsif type.to_s.match(/^msgstr\[[0-9]\]/)
+          # If it's a plural msgstr
+          @msgstr ||= []
+          @msgstr << Message.new(type, string)
         end
       end
 
@@ -69,7 +73,14 @@ module PoParser
       hash = {}
       instance_variables.each do |label|
         object = instance_variable_get(label)
-        hash[object.type] = object.to_s if not object.nil?
+        # If it's a plural msgstr
+        if object.is_a? Array
+          object.each do |entry|
+            hash[entry.type] = entry.to_s if not entry.nil?
+          end
+        else
+          hash[object.type] = object.to_s if not object.nil?
+        end
       end
       hash
     end
@@ -78,10 +89,16 @@ module PoParser
     # @return [String]
     def to_s
       lines = []
-      comment_labels = COMMENTS_LABELS.keys
       LABELS.each do |label|
         object = instance_variable_get("@#{label}".to_sym)
-        lines << object.to_s(true) if not object.nil?
+        # If it's a plural msgstr
+        if object.is_a? Array
+          object.each do |entry|
+            lines << entry.to_s(true) if not entry.nil?
+          end
+        else
+          lines << object.to_s(true) if not object.nil?
+        end
       end
 
       lines.join

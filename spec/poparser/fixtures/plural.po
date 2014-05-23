@@ -1,0 +1,6 @@
+msgid " including <a href=\"%(img_url)s\">%(stats)s image</a>"
+msgid_plural " including <a href=\"%(img_url)s\">%(stats)s images</a>"
+msgstr[0] ""
+"sad ads fdsaf ds fdfs dsa "
+msgstr[1] ""
+"sad ads fdsaf ds fdfs dsa "

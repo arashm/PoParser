@@ -14,4 +14,10 @@ describe PoParser::Transformer do
     result = { :'msgstr[0]' => "this is a txt" }
     expect(trans.transform(data)).to eq(result)
   end
+
+  it 'transforms multiline plural msgstr forms correctly' do
+    data = [{:msgstr_plural=>[{:plural_id=>"0", :text=>"this is a txt"}, {:text => 'some text'}]}]
+    result = { :'msgstr[0]' => ["this is a txt", "some text"] }
+    expect(trans.transform(data)).to eq(result)
+  end
 end

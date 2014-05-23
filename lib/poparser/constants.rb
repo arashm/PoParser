@@ -11,7 +11,6 @@ module PoParser
     :msgid => 'msgid',
     :msgid_plural => 'msgid_plural',
     :msgstr => 'msgstr',
-    :msgstr_plural => 'msgstr_plural',
     :msgctxt => 'msgctxt'
   }
 
