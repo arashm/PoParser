@@ -4,10 +4,12 @@ module PoParser
   class Po
     include Enumerable
     attr_reader :entries
+    attr_accessor :path
     alias_method :all, :entries
 
-    def initialize
+    def initialize(args = {})
       @entries = []
+      @path    = args.fetch(:path, nil)
     end
 
     # add new entries to po file
@@ -99,6 +101,14 @@ module PoParser
         array << entry.to_s
       end
       array.join("\n")
+    end
+
+    # Saves the file to the provided path
+    def save_file
+      raise ArgumentError, 'Need a Path to save the file' if @path.nil?
+      File.open(@path, 'w') do |f|
+        f.write to_s
+      end
     end
 
     def each
