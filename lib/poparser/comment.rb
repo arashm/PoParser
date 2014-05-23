@@ -12,11 +12,12 @@ module PoParser
       if @str.is_a? Array
         string = []
         @str.each do |str|
-          string << "#{COMMENTS_LABELS[@type]} #{str}\n"
+          string << "#{COMMENTS_LABELS[@type]} #{str}\n".gsub(/[^\S\n]+$/, '')
         end
         return string.join
       else
-        "#{COMMENTS_LABELS[@type]} #{@str}\n"
+        # removes the space but not newline at the end
+        "#{COMMENTS_LABELS[@type]} #{@str}\n".gsub(/[^\S\n]+$/, '')
       end
     end
 
