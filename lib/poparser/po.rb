@@ -75,7 +75,7 @@ module PoParser
       fuzzy_size = fuzzy.size
 
       {
-        translated: percentage(translated_size),
+        translated: percentage(translated_size - fuzzy_size),
         untranslated: percentage(untranslated_size),
         fuzzy: percentage(fuzzy_size)
       }
