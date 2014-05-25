@@ -6,8 +6,8 @@ describe PoParser::Entry do
   end
 
   let(:labels) do
-    %i(refrence extracted_comment flag previous_untraslated_string translator_comment
-      msgid msgid_plural msgstr msgctxt)
+    [:refrence, :extracted_comment, :flag, :previous_untraslated_string,
+      :translator_comment, :msgid, :msgid_plural, :msgstr, :msgctxt]
   end
 
   it 'should respond to labels' do
