@@ -114,7 +114,7 @@ module PoParser
     end
 
     def define_writer_methods(labels, object)
-      object = Object.const_get("PoParser::#{object}")
+      object = PoParser.const_get(object)
       labels.each do |type, mark|
         unless Entry.method_defined? "#{type}=".to_sym
           self.class.send(:define_method, "#{type}=".to_sym, lambda { |val|
