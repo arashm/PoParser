@@ -1,27 +1,22 @@
 module PoParser
   class Entry
     # TODO: raise error if a label is not known
-    def initialize(args= {})
+    def initialize(args = {})
       # Defining all instance variables to prevent warnings
       LABELS.each do |label|
         instance_variable_set "@#{label.to_s}".to_sym, nil
       end
 
       # Set passed arguments
-      args.each do |type, string|
-        if COMMENTS_LABELS.include? type
-          instance_variable_set "@#{type.to_s}".to_sym, Comment.new(type, string)
-        elsif ENTRIES_LABELS.include? type
-          instance_variable_set "@#{type.to_s}".to_sym, Message.new(type, string)
-        elsif type.to_s.match(/^msgstr\[[0-9]\]/)
-          # If it's a plural msgstr
-          @msgstr ||= []
-          @msgstr << Message.new(type, string)
-        end
+      args.each do |name, value|
+        set_instance_variable(name, value)
       end
 
-      define_writer_methods
+      define_writer_methods(COMMENTS_LABELS, 'Comment')
+      define_writer_methods(ENTRIES_LABELS, 'Message')
       define_reader_methods
+
+      self.class.send(:alias_method, :translate, :msgstr=)
     end
 
     # Checks if the entry is untraslated
@@ -106,38 +101,35 @@ module PoParser
   
   private
 
-    def define_writer_methods
-      COMMENTS_LABELS.each do |type, mark|
+    def set_instance_variable(name, value)
+      if COMMENTS_LABELS.include? name
+        instance_variable_set "@#{name.to_s}".to_sym, Comment.new(name, value)
+      elsif ENTRIES_LABELS.include? name
+        instance_variable_set "@#{name.to_s}".to_sym, Message.new(name, value)
+      elsif name.to_s.match(/^msgstr\[[0-9]\]/)
+        # If it's a plural msgstr
+        @msgstr ||= []
+        @msgstr << Message.new(name, value)
+      end
+    end
+
+    def define_writer_methods(labels, object)
+      object = Object.const_get("PoParser::#{object}")
+      labels.each do |type, mark|
         unless Entry.method_defined? "#{type}=".to_sym
           self.class.send(:define_method, "#{type}=".to_sym, lambda { |val|
-            if instance_variable_get("@#{type}".to_sym).is_a? Comment
-              comment = instance_variable_get "@#{type}".to_sym
-              comment.type = type
-              comment.str = val
+            if instance_variable_get("@#{type}".to_sym).is_a? object
+              klass      = instance_variable_get "@#{type}".to_sym
+              klass.type = type
+              klass.str  = val
             else
-              instance_variable_set "@#{type}".to_sym, Comment.new(type, val)
+              instance_variable_set "@#{type}".to_sym, object.new(type, val)
             end
+            # return value
             instance_variable_get "@#{type}".to_sym
           })
         end
       end
-
-      ENTRIES_LABELS.each do |type, mark|
-        unless Entry.method_defined? "#{type}=".to_sym
-          self.class.send(:define_method, "#{type}=".to_sym, lambda { |val|
-            if instance_variable_get("@#{type}".to_sym).is_a? Message
-              message = instance_variable_get "@#{type}".to_sym
-              message.type = type
-              message.str = val
-            else
-              instance_variable_set "@#{type}".to_sym, Message.new(type, val)
-            end
-            instance_variable_get "@#{type}".to_sym
-          })
-        end
-      end
-
-      self.class.send(:alias_method, :translate, :msgstr=)
     end
 
     def define_reader_methods
