@@ -11,7 +11,7 @@ module PoParser
     end
 
     def str
-      @str.join
+      @str.is_a?(Array) ? @str.join : @str
     end
 
     def to_s(with_label = false)
@@ -30,7 +30,7 @@ module PoParser
     end
 
     def to_str
-      @str.join
+      @str.is_a?(Array) ? @str.join : @str
     end
 
   private
