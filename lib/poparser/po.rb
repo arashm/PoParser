@@ -3,9 +3,7 @@ module PoParser
   # 
   class Po
     include Enumerable
-    attr_reader :entries
     attr_accessor :path
-    alias_method :all, :entries
 
     def initialize(args = {})
       @entries = []
@@ -39,6 +37,21 @@ module PoParser
     end
     alias_method :<<, :add_entry
 
+    # Returns an array of all entries in po file
+    # 
+    # @param include_cached [Boolean] Whether include cached entries or not 
+    # @return [Array]
+    def entries(include_cached=false)
+      if include_cached
+        @entries
+      else
+        find_all do |entry|
+          !entry.cached?
+        end
+      end
+    end
+    alias_method :all, :entries
+
     # Finds all entries that are flaged as fuzzy
     # 
     # @return [Array] an array of fuzzy entries
@@ -70,9 +83,7 @@ module PoParser
     # 
     # @return [String]
     def size
-      find_all do |entry|
-        !entry.cached?
-      end.length
+      entries.length
     end
     alias_method :length, :size
 
