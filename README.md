@@ -36,6 +36,9 @@ The `parse` method returns a `PO` object which contains all `Entries`:
 # get all entries
 po.entries # or .all alias
 
+# include cashed entries (started with "#~", these entries are just kept by program for later use and are not counted as active entries)
+po.entries(true)
+
 # get all fuzzy entries
 po.fuzzy
 
@@ -80,6 +83,7 @@ refrence
 extracted_comment
 flag
 previous_untraslated_string
+cached
 msgid
 msgid_plural
 msgstr
