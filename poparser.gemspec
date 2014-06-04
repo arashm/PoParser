@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Runtime deps
-  spec.add_runtime_dependency "parslet"
+  spec.add_runtime_dependency "parslet", "~> 1.6"
 
   # Development deps
   spec.add_development_dependency "bundler", "~> 1.5"
