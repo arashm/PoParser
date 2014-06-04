@@ -52,4 +52,23 @@ describe PoParser::Po do
     @po << cached
     expect(@po.size).to eq(1)
   end
+
+  context 'search' do
+    before do
+      path = Pathname.new('spec/poparser/fixtures/test.po').realpath
+      @po = PoParser::Tokenizer.new.extract_entries(path)
+    end
+
+    it 'raises error if label is not valid' do
+      expect{
+        @po.search_in(:wrong, 'sth') 
+      }.to raise_error(ArgumentError, 'Unknown key: wrong')
+    end
+
+    it 'searches in PO file' do
+      result = @po.search_in(:msgid, 'Invalid action')
+      expect(result.length).to eq(1)
+      expect(result[0].msgid.str).to eq('Invalid action. Someone probably posted another action just before you.')
+    end
+  end
 end

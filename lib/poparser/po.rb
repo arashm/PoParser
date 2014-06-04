@@ -87,6 +87,22 @@ module PoParser
     end
     alias_method :length, :size
 
+    # Search for entries with provided string
+    # 
+    # @param label [Symbol] One of the known LABELS
+    # @param string [String] String to search for
+    # @return [Array] Array of matched entries
+    def search_in(label, string)
+      if !LABELS.include? label.to_sym
+        raise ArgumentError, "Unknown key: #{label}"
+      end
+
+      find_all do |entry|
+        text = entry.send(label).str
+        text.match(/#{string}/i)
+      end
+    end
+
     # Shows statistics and status of the provided file in percentage.
     # 
     # @return [Hash] a hash of translated, untranslated and fuzzy percentages
