@@ -10,6 +10,7 @@ module PoParser
       refrence |
       extracted_comment | flag |
       previous_untraslated_string |
+      cached |
       translator_comment
     end
 
@@ -18,6 +19,7 @@ module PoParser
     rule(:refrence)                   { spaced('#:') >> comment_text_line.as(:refrence) }
     rule(:flag)                       { spaced('#,') >> comment_text_line.as(:flag) }
     rule(:previous_untraslated_string){ spaced('#|') >> comment_text_line.as(:previous_untraslated_string) }
+    rule(:cached)                     { spaced('#~') >> comment_text_line.as(:cached) }
 
     # Entries
     rule(:entries) do

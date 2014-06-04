@@ -45,4 +45,11 @@ describe PoParser::Po do
     @po << [entry, entry2, entry3]
     ap @po.stats
   end
+
+  it 'shouldn\'t count cached entries' do
+    @po << entry
+    cached = { cached: 'sth', flag: 'Fuzzy' }
+    @po << cached
+    expect(@po.size).to eq(1)
+  end
 end

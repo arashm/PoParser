@@ -19,10 +19,19 @@ module PoParser
       self.class.send(:alias_method, :translate, :msgstr=)
     end
 
+    # If entry doesn't have any msgid, it's probably a cached entry that is
+    # kept by the program for later use. These entries will usually start with: #~
+    # 
+    # @return [Boolean]
+    def cached?
+      !@cached.nil?
+    end
+
     # Checks if the entry is untraslated
     # 
     # @return [Boolean]
     def untranslated?
+      return false if cached?
       @msgstr.nil? || @msgstr.to_s == ''
     end
     alias_method :incomplete? , :untranslated?
@@ -31,6 +40,7 @@ module PoParser
     # 
     # @return [Boolean]
     def translated?
+      return false if cached?
       not untranslated?
     end
     alias_method :complete? , :translated?
@@ -46,6 +56,7 @@ module PoParser
     # 
     # @return [Boolean]
     def fuzzy?
+      return false if cached?
       @flag.to_s == 'fuzzy'
     end
 

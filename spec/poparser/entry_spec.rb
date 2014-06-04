@@ -4,6 +4,7 @@ require 'spec_helper'
 describe PoParser::Entry do
   before(:each) do
     @entry = PoParser::Entry.new
+    @entry.msgid = 'some string'
   end
 
   let(:labels) do
@@ -80,6 +81,30 @@ describe PoParser::Entry do
       @entry.msgstr = ['first line', 'second line']
       result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
       expect(@entry.to_s).to eq(result)
+    end
+  end
+
+  context 'Cached' do
+    before do
+      @entry = PoParser::Entry.new
+      @entry.cached = '#~ msgid "a cached entry"'
+      @entry.flag = 'Fuzzy'
+    end
+
+    it 'checks for chached entries' do
+      expect(@entry.cached?).to be_true
+    end
+
+    it 'shouldn be counted as untranslated' do
+      expect(@entry.untranslated?).to be_false
+    end
+
+    it 'shouldn be counted as translated' do
+      expect(@entry.translated?).to be_false
+    end
+
+    it 'shouldn\'t mark it as fuzzy' do
+      expect(@entry.fuzzy?).to be_false
     end
   end
 end

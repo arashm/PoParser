@@ -66,6 +66,16 @@ module PoParser
       end
     end
 
+    # Count of all entries without counting cached entries
+    # 
+    # @return [String]
+    def size
+      find_all do |entry|
+        !entry.cached?
+      end.length
+    end
+    alias_method :length, :size
+
     # Shows statistics and status of the provided file in percentage.
     # 
     # @return [Hash] a hash of translated, untranslated and fuzzy percentages
@@ -126,9 +136,8 @@ module PoParser
     # 
     # @param [Integer] number of entries
     # @return [Float] percentage of the provided entries
-    def percentage(size)
-      total = @entries.size
-      ((size.to_f / total) * 100).round(1)
+    def percentage(count)
+      ((count.to_f / self.size) * 100).round(1)
     end
   end
 end
