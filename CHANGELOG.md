@@ -1,3 +1,7 @@
+## Version 0.2.1
+
+* Add search_in method.
+
 ## Version 0.2.0
 
 * Some entries in PO files are started with "#~", these entries are just kept by program for later use and are not counted as active entries. `PoParser` now supports them. We won't count them in stats or show them in Tanslated or Untranslated entries. They're just there.

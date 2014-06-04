@@ -37,7 +37,9 @@ The `parse` method returns a `PO` object which contains all `Entries`:
 # get all entries
 po.entries # or .all alias
 
-# include cashed entries (started with "#~", these entries are just kept by program for later use and are not counted as active entries)
+# include cashed entries (started with "#~", these
+# entries are just kept by program for later use and are 
+# not counted as active entries)
 po.entries(true)
 
 # get all fuzzy entries
@@ -133,7 +135,21 @@ entry.to_s(true)
 
 ### Searching
 
-`PO` is an `Enumerable`. All exciting methods from `Enumerable` are available in `PO`. the `PO` yields `Entry`.
+`PO` is an `Enumerable`. All exciting methods from `Enumerable` are available in `PO`. The `PO` yields `Entry`.
+
+```ruby
+po.find_all do |entry|
+  entry.msgid.str.match(/some text/i)
+end
+```
+
+There is a helper method that does the same:
+
+```ruby
+po.search_in(:msgstr, 'some string to search')
+```
+
+This method returns an array of matched entries.
 
 ### Saving
 You can simply save the PO file using the `PO` object:
