@@ -31,8 +31,11 @@ module PoParser
     # 
     # @return [Boolean]
     def untranslated?
-      return false if cached?
-      @msgstr.nil? || @msgstr.to_s == ''
+      return false if cached? || fuzzy?
+      if @msgstr.is_a? Array
+        return @msgstr.map {|ms| ms.str}.join.empty?
+      end
+      @msgstr.nil? || @msgstr.str.empty?
     end
     alias_method :incomplete? , :untranslated?
 
@@ -40,7 +43,7 @@ module PoParser
     # 
     # @return [Boolean]
     def translated?
-      return false if cached?
+      return false if cached? || fuzzy?
       not untranslated?
     end
     alias_method :complete? , :translated?
@@ -57,7 +60,7 @@ module PoParser
     # @return [Boolean]
     def fuzzy?
       return false if cached?
-      @flag.to_s == 'fuzzy'
+      @flag.to_s.match('fuzzy') ? true : false
     end
 
     # Flag the entry as Fuzzy
@@ -109,8 +112,8 @@ module PoParser
 
       lines.join
     end
-  
-  private
+
+    private
 
     def set_instance_variable(name, value)
       if COMMENTS_LABELS.include? name
