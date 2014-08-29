@@ -128,7 +128,7 @@ module PoParser
     # @return [Array] array of hashes of entries
     def to_h
       array = []
-      array << @header.to_h
+      array << @header.to_h if @header
       @entries.each do |entry|
         array << entry.to_h
       end
@@ -140,7 +140,7 @@ module PoParser
     # @return [String]
     def to_s
       array = []
-      array << @header.to_s
+      array << @header.to_s if @header
       # add a blank line after header
       array << ""
       @entries.each do |entry|
