@@ -1,8 +1,9 @@
 module PoParser
   # Po class keeps all entries of a Po file
-  # 
+  #
   class Po
     include Enumerable
+    attr_reader :header
     attr_accessor :path
 
     def initialize(args = {})
@@ -11,9 +12,9 @@ module PoParser
     end
 
     # add new entries to po file
-    # 
+    #
     # @example
-    #   entry = { 
+    #   entry = {
     #             translator_comment: 'comment',
     #             refrence: 'refrense comment',
     #             flag: 'fuzzy',
@@ -21,12 +22,16 @@ module PoParser
     #             msgstr: 'translation'
     #           }
     #   add_entry(entry)
-    # 
+    #
     # @param entry [Hash, Array] a hash of entry contents or an array of hashes
     def add_entry(entry)
       if entry.kind_of? Hash
-        @entries << Entry.new(entry)
-        @entries.last
+        if entry[:msgid] && entry[:msgid].length == 0
+          @header = Header.new(Entry.new(entry))
+        else
+          @entries << Entry.new(entry)
+          @entries.last
+        end
       elsif entry.kind_of? Array
         entry.each do |en|
           @entries << Entry.new(en)
@@ -38,8 +43,8 @@ module PoParser
     alias_method :<<, :add_entry
 
     # Returns an array of all entries in po file
-    # 
-    # @param include_cached [Boolean] Whether include cached entries or not 
+    #
+    # @param include_cached [Boolean] Whether include cached entries or not
     # @return [Array]
     def entries(include_cached=false)
       if include_cached
@@ -53,7 +58,7 @@ module PoParser
     alias_method :all, :entries
 
     # Finds all entries that are flaged as fuzzy
-    # 
+    #
     # @return [Array] an array of fuzzy entries
     def fuzzy
       find_all do |entry|
@@ -62,7 +67,7 @@ module PoParser
     end
 
     # Finds all entries that are untranslated
-    # 
+    #
     # @return [Array] an array of untranslated entries
     def untranslated
       find_all do |entry|
@@ -71,7 +76,7 @@ module PoParser
     end
 
     # Finds all entries that are translated
-    # 
+    #
     # @return [Array] an array of translated entries
     def translated
       find_all do |entry|
@@ -80,7 +85,7 @@ module PoParser
     end
 
     # Count of all entries without counting cached entries
-    # 
+    #
     # @return [String]
     def size
       entries.length
@@ -88,7 +93,7 @@ module PoParser
     alias_method :length, :size
 
     # Search for entries with provided string
-    # 
+    #
     # @param label [Symbol] One of the known LABELS
     # @param string [String] String to search for
     # @return [Array] Array of matched entries
@@ -104,7 +109,7 @@ module PoParser
     end
 
     # Shows statistics and status of the provided file in percentage.
-    # 
+    #
     # @return [Hash] a hash of translated, untranslated and fuzzy percentages
     def stats
       untranslated_size = untranslated.size
@@ -119,10 +124,11 @@ module PoParser
     end
 
     # Converts Po file to an hashes of entries
-    # 
+    #
     # @return [Array] array of hashes of entries
     def to_h
       array = []
+      array << @header.to_h
       @entries.each do |entry|
         array << entry.to_h
       end
@@ -130,10 +136,13 @@ module PoParser
     end
 
     # Shows a String representation of the Po file
-    # 
+    #
     # @return [String]
     def to_s
       array = []
+      array << @header.to_s
+      # add a blank line after header
+      array << ""
       @entries.each do |entry|
         array << entry.to_s
       end
@@ -160,7 +169,7 @@ module PoParser
 
   private
     # calculates percentages based on total number of entries
-    # 
+    #
     # @param [Integer] number of entries
     # @return [Float] percentage of the provided entries
     def percentage(count)

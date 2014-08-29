@@ -11,11 +11,13 @@ module PoParser
     def extract_entries(path)
       @po.path = path
       block = ''
+      # block_index = 0
       File.open(path, 'r') do |f|
         f.each_line do |line|
           if line.match(/^\n$/)
             @po << parse_block(block)
             block = ''
+            # block_index += 1
           elsif f.eof?
             block += line
             @po << parse_block(block)

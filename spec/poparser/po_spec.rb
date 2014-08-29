@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe PoParser::Po do
-  let (:entry) do 
+  let (:entry) do
     {
       translator_comment: 'comment',
       refrence: 'refrence comment',
@@ -10,7 +10,7 @@ describe PoParser::Po do
       msgstr: 'translated string'
     }
   end
-  
+
   before(:each) do
     @po = PoParser::Po.new
   end
@@ -61,7 +61,7 @@ describe PoParser::Po do
 
     it 'raises error if label is not valid' do
       expect{
-        @po.search_in(:wrong, 'sth') 
+        @po.search_in(:wrong, 'sth')
       }.to raise_error(ArgumentError, 'Unknown key: wrong')
     end
 
@@ -69,6 +69,25 @@ describe PoParser::Po do
       result = @po.search_in(:msgid, 'Invalid action')
       expect(result.length).to eq(1)
       expect(result[0].msgid.str).to eq('Invalid action. Someone probably posted another action just before you.')
+    end
+  end
+
+  context 'Header' do
+    before do
+      path = Pathname.new('spec/poparser/fixtures/header.po').realpath
+      @po = PoParser::Tokenizer.new.extract_entries(path)
+    end
+
+    it 'should respond to header' do
+      expect(@po).to respond_to :header
+    end
+
+    it 'should recognize header' do
+      expect(@po.header).to be_a_kind_of PoParser::Header
+    end
+
+    it 'should have right content for header' do
+      expect(@po.header.comments).to eq(["Arash Mousavi <mousavi.arash@gmail.com>, 2014.", ""])
     end
   end
 end
