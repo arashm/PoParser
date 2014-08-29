@@ -24,5 +24,9 @@ module PoParser
     def to_str
       @str
     end
+
+    def inspect
+      @str
+    end
   end
 end

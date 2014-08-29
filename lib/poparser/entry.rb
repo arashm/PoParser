@@ -21,14 +21,14 @@ module PoParser
 
     # If entry doesn't have any msgid, it's probably a cached entry that is
     # kept by the program for later use. These entries will usually start with: #~
-    # 
+    #
     # @return [Boolean]
     def cached?
       !@cached.nil?
     end
 
     # Checks if the entry is untraslated
-    # 
+    #
     # @return [Boolean]
     def untranslated?
       return false if cached? || fuzzy?
@@ -40,7 +40,7 @@ module PoParser
     alias_method :incomplete? , :untranslated?
 
     # Checks if the entry is translated
-    # 
+    #
     # @return [Boolean]
     def translated?
       return false if cached? || fuzzy?
@@ -49,14 +49,14 @@ module PoParser
     alias_method :complete? , :translated?
 
     # Checks if the entry is plural
-    # 
+    #
     # @return [Boolean]
     def plural?
       @msgid_plural != nil
     end
 
     # Checks if the entry is fuzzy
-    # 
+    #
     # @return [Boolean]
     def fuzzy?
       return false if cached?
@@ -111,6 +111,10 @@ module PoParser
       end
 
       lines.join
+    end
+
+    def inspect
+      to_s
     end
 
     private

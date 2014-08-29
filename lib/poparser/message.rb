@@ -33,6 +33,10 @@ module PoParser
       @str.is_a?(Array) ? @str.join : @str
     end
 
+    def inspect
+      @str
+    end
+
   private
     def remove_empty_line
       if @str.is_a? Array
