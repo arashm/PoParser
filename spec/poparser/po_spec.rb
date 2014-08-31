@@ -16,13 +16,13 @@ describe PoParser::Po do
   end
 
   it 'should be able to add an entry to Po' do
-    # << is an alias for Po#add_entry
-    expect(@po << entry).to be_a_kind_of PoParser::Entry
+    # << is an alias for Po#add
+    expect(@po << entry).to be_a_kind_of PoParser::Po
   end
 
   it 'should be able to add multiple entries' do
     entries = [entry, entry.dup]
-    expect(@po << entries).to be_a_kind_of Array
+    expect(@po << entries).to be_a_kind_of PoParser::Po
   end
 
   it 'returns all fuzzy entries' do
@@ -88,6 +88,13 @@ describe PoParser::Po do
 
     it 'should have right content for header' do
       expect(@po.header.comments).to eq(["Arash Mousavi <mousavi.arash@gmail.com>, 2014.", ""])
+    end
+
+    it 'throws error if there\'re two header string' do
+      path = Pathname.new('spec/poparser/fixtures/header_error.po').realpath
+      expect{
+        @po = PoParser::Tokenizer.new.extract_entries(path)
+        }.to raise_error(RuntimeError, "Duplicate entry, header was already instantiated")
     end
   end
 end

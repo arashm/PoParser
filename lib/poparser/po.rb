@@ -1,6 +1,5 @@
 module PoParser
   # Po class keeps all entries of a Po file
-  #
   class Po
     include Enumerable
     attr_reader :header
@@ -21,26 +20,20 @@ module PoParser
     #             msgstr: 'translatable string',
     #             msgstr: 'translation'
     #           }
-    #   add_entry(entry)
+    #   add(entry)
     #
     # @param entry [Hash, Array] a hash of entry contents or an array of hashes
-    def add_entry(entry)
+    def add(entry)
       if entry.kind_of? Hash
-        if entry[:msgid] && entry[:msgid].length == 0
-          @header = Header.new(Entry.new(entry))
-        else
-          @entries << Entry.new(entry)
-          @entries.last
-        end
+        import_hash(entry)
       elsif entry.kind_of? Array
-        entry.each do |en|
-          @entries << Entry.new(en)
-        end
+        import_array(entry)
       else
         raise ArgumentError, 'Must be a hash or an array of hashes'
       end
+      self
     end
-    alias_method :<<, :add_entry
+    alias_method :<<, :add
 
     # Returns an array of all entries in po file
     #
@@ -174,6 +167,25 @@ module PoParser
     # @return [Float] percentage of the provided entries
     def percentage(count)
       ((count.to_f / self.size) * 100).round(1)
+    end
+
+    def import_hash(entry)
+      add_entry(entry)
+    end
+
+    def import_array(entry)
+      entry.each do |en|
+        add_entry(en)
+      end
+    end
+
+    def add_entry(entry)
+      if entry[:msgid] && entry[:msgid].length == 0
+        raise(RuntimeError, "Duplicate entry, header was already instantiated") if @header != nil
+        @header = Header.new(Entry.new(entry))
+      else
+        @entries << Entry.new(entry)
+      end
     end
   end
 end
