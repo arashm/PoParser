@@ -164,7 +164,7 @@ module PoParser
     end
 
     def inspect
-      "<#{self.class.name}, Translated: #{stats[:translated]}% Untranslated: #{stats[:untranslated]}% Fuzzy: #{stats[:fuzzy]}%>"
+      "<#{self.class.name}, Translated: #{translated.length}(#{stats[:translated]}%) Untranslated: #{untranslated.length}(#{stats[:untranslated]}%) Fuzzy: #{fuzzy.length}(#{stats[:fuzzy]}%)>"
     end
 
   private
