@@ -9,6 +9,7 @@ module PoParser
 
       # Set passed arguments
       args.each do |name, value|
+        raise(ArgumentError, "Unknown label #{name}") if !LABELS.include? name
         set_instance_variable(name, value)
       end
 

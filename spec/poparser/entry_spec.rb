@@ -18,6 +18,12 @@ describe PoParser::Entry do
     end
   end
 
+  it 'should raise error if lable is unknown' do
+    expect {
+      PoParser::Entry.new({:msgstr => 'test', :blah_blah => 'error'})
+    }.to raise_error(ArgumentError, "Unknown label blah_blah")
+  end
+
   it 'should show a hash presentation of a entry' do
     @entry.msgid = 'string'
     @entry.msgstr = 'reshte'
