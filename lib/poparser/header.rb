@@ -48,7 +48,7 @@ module PoParser
           k.gsub!(/\\+n$/, '')
         end
       end
-      merge_to_previous_string(options_array).to_h
+      Hash[merge_to_previous_string(options_array)]
     end
 
     # Sometimes long lines are wrapped into new lines, this function
