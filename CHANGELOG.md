@@ -1,3 +1,10 @@
+## Version 1.0.0
+
+* add support for header entry
+* `add_entry` renamed to `add` and returns `self`
+* inspect of `po` now returns number of each type entries besides percentages
+* it will raise error if you pass an unknown label for adding entries
+
 ## Version 0.2.1
 
 * Add search_in method.

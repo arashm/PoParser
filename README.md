@@ -38,7 +38,7 @@ The `parse` method returns a `PO` object which contains all `Entries`:
 po.entries # or .all alias
 
 # include cashed entries (started with "#~", these
-# entries are just kept by program for later use and are 
+# entries are just kept by program for later use and are
 # not counted as active entries)
 po.entries(true)
 
@@ -68,9 +68,9 @@ new_entry = {
               msgstr: 'translated string'
             }
 
-po.add_entry(new_entry)
+po.add(new_entry)
 
-# There's also an alias for add_entry
+# There's also an alias for add `<<`
 po << new_entry
 ```
 
@@ -98,6 +98,8 @@ msgctxt
 The `PO` object contains many `Entry` objects. Number of methods are available to check state of the `Entry`:
 
 ```ruby
+entry = po.entries[1]
+
 entry.untranslated? # or .incomplete? alias
 #=> false
 entry.translated? # or .complete? alias
@@ -113,7 +115,7 @@ You can get or edit each of property of the `Entry`:
 ```ruby
 entry.msgid.to_s
 #=> "This is an msgid that needs to get translated"
-entry.translate = "This entry is translated" # or msgstr= alias
+entry.translate = "This entry is translated" # or `msgstr=` alias
 entry.msgstr.to_s
 #=> "This entry is translated"
 ```
