@@ -9,7 +9,7 @@ module PoParser
 
       # Set passed arguments
       args.each do |name, value|
-        raise(ArgumentError, "Unknown label #{name}") if !LABELS.include? name
+        raise(ArgumentError, "Unknown label #{name}") if !valid_label? name
         set_instance_variable(name, value)
       end
 
@@ -161,5 +161,8 @@ module PoParser
       end
     end
 
+    def valid_label?(label)
+      !(label =~ /^msgstr\[[0-9]\]/).nil? || LABELS.include?(label)
+    end
   end
 end
