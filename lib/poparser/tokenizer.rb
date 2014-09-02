@@ -1,5 +1,3 @@
-require 'ap'
-
 module PoParser
   # Feed each block of PO file to Parser.
   class Tokenizer
