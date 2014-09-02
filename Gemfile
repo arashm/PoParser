@@ -4,11 +4,11 @@ group :test do
   gem 'coveralls', :require => false
   gem 'pry-byebug', :platforms => :ruby_20
   gem 'rspec', [">= 2.14", "< 2.99"]
+  gem 'awesome_print'
 end
 
 group :development do
   gem 'pry'
-  gem 'awesome_print'
   gem 'guard-rspec'
 end
 
