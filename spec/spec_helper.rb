@@ -4,9 +4,12 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
 require 'poparser'
 require 'parslet/rig/rspec'
 require 'coveralls'
+require 'awesome_print'
+
 Coveralls.wear!
 
 RSpec.configure do |config|

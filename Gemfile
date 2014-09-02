@@ -1,9 +1,15 @@
 source 'https://rubygems.org'
 
-gem 'coveralls', :require => false
-gem 'guard-rspec'
-gem 'pry-byebug'
-gem 'awesome_print'
+group :test do
+  gem 'coveralls', :require => false
+  gem 'pry-byebug', :platforms => :ruby_20
+end
+
+group :development do
+  gem 'pry'
+  gem 'awesome_print'
+  gem 'guard-rspec'
+end
 
 # Specify your gem's dependencies in poparser.gemspec
 gemspec
