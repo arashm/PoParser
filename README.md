@@ -37,7 +37,7 @@ The `parse` method returns a `PO` object which contains all `Entries`:
 # get all entries
 po.entries # or .all alias
 
-# include cashed entries (started with "#~", these
+# including cached entries (started with "#~", these
 # entries are just kept by program for later use and are
 # not counted as active entries)
 po.entries(true)
@@ -75,6 +75,21 @@ po << new_entry
 ```
 
 You can pass an array of hashes to `new_entry` and it will be added to `PO` file.
+
+Adding plural string is the same:
+
+```ruby
+new_entry = {
+              translator_comment: 'comment',
+              refrence: 'refrence comment',
+              msgid_plural: 'untranslated',
+              'msgstr[0]': 'translated string',
+              'msgstr[1]': 'translated string'
+            }
+
+```
+
+Note: currently `PoParser` won't warn you if you add a `msgstr[0]` without `msgid_plural`, any `msgid` at all or even if index numbers in `msgstr[0]` are not in any logical order.
 
 ### Entry
 
@@ -169,10 +184,36 @@ po.path = 'example2.po'
 po.save_file
 ```
 
+## Header
+
+The first entry of every PO file is reserved for header which represent license and general information about translators and the po file itself. For more information visit the [GNU website](https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html#Header-Entry).
+
+Get header with `header`!:
+
+```ruby
+po.header
+```
+
+You can get and set following variables from `header`:
+
+```
+  pot_creation_date
+  po_revision_date
+  project_id
+  report_to
+  last_translator
+  team
+  language
+  charset
+  encoding
+  plural_forms
+```
+
 ##To-Do
 
 * Streaming support
-* Better error reporting
+* Update header after changing/saving po
+* add `before_save` and `after_save` callbacks
 
 ## Contributing
 

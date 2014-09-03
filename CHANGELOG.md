@@ -2,8 +2,8 @@
 
 * add support for header entry
 * `add_entry` renamed to `add` and returns `self`
-* inspect of `po` now returns number of each type entries besides percentages
-* it will raise error if you pass an unknown label for adding entries
+* besides percentages, inspect of `po` now returns each entry count too
+* `po.add` now raises error if you try to add an unknown label
 
 ## Version 0.2.1
 

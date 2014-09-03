@@ -23,6 +23,7 @@ module PoParser
     #   add(entry)
     #
     # @param entry [Hash, Array] a hash of entry contents or an array of hashes
+    # @return [Po]
     def add(entry)
       if entry.kind_of? Hash
         import_hash(entry)
