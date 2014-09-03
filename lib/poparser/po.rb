@@ -17,7 +17,7 @@ module PoParser
     #             translator_comment: 'comment',
     #             refrence: 'refrense comment',
     #             flag: 'fuzzy',
-    #             msgstr: 'translatable string',
+    #             msgid: 'translatable string',
     #             msgstr: 'translation'
     #           }
     #   add(entry)
