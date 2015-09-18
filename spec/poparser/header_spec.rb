@@ -26,7 +26,7 @@ describe PoParser::Header do
 
   it 'should respond to labels' do
     labels.each do |label|
-      @header.should respond_to label
+      expect(@header).to respond_to label
     end
   end
 
