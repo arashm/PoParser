@@ -22,6 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "parslet", "~> 1.7"
 
   # Development deps
-  spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.4"
+  spec.add_development_dependency "bundler", ">= 0"
+  spec.add_development_dependency "rake", ">= 0"
 end
