@@ -26,6 +26,7 @@ Or install it yourself as:
 Working with the GEM is pretty easy:
 
 ```ruby
+require 'poparser'
 path = Pathname.new('example.po')
 po   = PoParser.parse(path)
 => <PoParser::Po, Translated: 68.1% Untranslated: 20.4% Fuzzy: 11.5%>
