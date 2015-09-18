@@ -1,5 +1,5 @@
 module PoParser
-  # Converts the array returned from {Parser} to a useable hash
+  # Converts the array returned from {Parser} to a usable hash
   class Transformer
     def initialize
       @hash = {}
@@ -15,8 +15,8 @@ module PoParser
 
   private
     # @Note: There was a problem applying all rules together. I don't know
-    #   in what order Parslet run rules, but it's not in order. I end up
-    #   making to seperate transform and feed one output to the other.
+    #   in what order Parslet run rules, but it's not in order. I ended up
+    #   making two separate transform and feed one output to the other.
     def first_transform
       Parslet::Transform.new do
         rule(:msgstr_plural => subtree(:plural)) do
@@ -44,7 +44,7 @@ module PoParser
 
     # Merges two hashed together. If both hashes have common keys it
     # will create an array of them
-    # 
+    #
     # @return [Hash]
     def merge(newh)
       @hash.merge!(newh) do |key, oldval, newval|
