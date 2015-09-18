@@ -1,4 +1,4 @@
-# Poparser
+# PoParser
 
 [![Build Status](https://travis-ci.org/arashm/PoParser.svg?branch=master)](https://travis-ci.org/arashm/PoParser)
 [![Coverage Status](https://img.shields.io/coveralls/arashm/PoParser.svg)](https://coveralls.io/r/arashm/PoParser)
@@ -11,7 +11,7 @@ A Ruby PO file parser, editor and generator. PO files are translation files gene
 
 Add this line to your application's Gemfile:
 
-    gem 'poparser'
+    gem 'PoParser'
 
 And then execute:
 
@@ -19,7 +19,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install poparser
+    $ gem install PoParser
 
 ## Usage
 
