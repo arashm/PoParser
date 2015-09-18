@@ -1,3 +1,7 @@
+## Version 1.0.1
+
+* Update dependencies and tests
+
 ## Version 1.0.0
 
 * add support for header entry
