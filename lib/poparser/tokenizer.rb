@@ -12,7 +12,7 @@ module PoParser
       File.open(path, 'r') do |f|
         f.each_line do |line|
           if line.match(/^\n$/)
-            @po << parse_block(block)
+            @po << parse_block(block) if block != ''
             block = ''
           elsif f.eof?
             block += line
