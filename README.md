@@ -126,12 +126,12 @@ entry.plural?
 #=> false
 ```
 
-You can get or edit each of property of the `Entry`:
+You can get or edit each property of the `Entry`:
 
 ```ruby
 entry.msgid.to_s
 #=> "This is an msgid that needs to get translated"
-entry.translate = "This entry is translated" # or `msgstr=` alias
+entry.translate("This entry is translated") # or `msgstr=` alias
 entry.msgstr.to_s
 #=> "This entry is translated"
 ```
