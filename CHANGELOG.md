@@ -1,3 +1,8 @@
+## Version 1.0.2
+* Update dependencies
+* Handle empty lines in .po file (thanks to @roland9)
+* Fix translated strings stats
+
 ## Version 1.0.1
 
 * Update dependencies and tests
