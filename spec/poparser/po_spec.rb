@@ -40,10 +40,15 @@ describe PoParser::Po do
   end
 
   it 'shows stats' do
-    entry2, entry3 = entry.dup, entry.dup
+    entry2, entry3, entry4 = entry.dup, entry.dup, entry.dup
     [entry2, entry3].each { |en| en[:msgstr] = '' }
-    @po << [entry, entry2, entry3]
-    ap @po.stats
+    @po << [entry, entry2, entry3, entry4]
+    @po.entries.last.flag_as_fuzzy
+    result = @po.stats
+
+    expect(result[:translated]).to eq 25
+    expect(result[:untranslated]).to eq 50
+    expect(result[:fuzzy]).to eq 25
   end
 
   it 'shouldn\'t count cached entries' do

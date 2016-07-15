@@ -33,7 +33,7 @@ module PoParser
     rule(:multiline)    { str('"').present? >> msg_text_line.repeat.maybe }
     rule(:msgid)        { spaced('msgid') >> msg_text_line >> multiline.repeat }
     rule(:msgid_plural) { spaced('msgid_plural') >> msg_text_line >> multiline.repeat }
-    
+
     rule(:msgstr)       { spaced('msgstr') >> msg_text_line >> multiline.repeat }
     rule(:msgstr_plural){ str('msgstr') >> bracketed(match["[0-9]"].as(:plural_id)) >> space? >> msg_text_line >> multiline.repeat }
     rule(:msgctxt)      { spaced('msgctxt') >> msg_text_line >> multiline.repeat }

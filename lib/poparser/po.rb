@@ -107,13 +107,13 @@ module PoParser
     # @return [Hash] a hash of translated, untranslated and fuzzy percentages
     def stats
       untranslated_size = untranslated.size
-      translated_size = translated.size
-      fuzzy_size = fuzzy.size
+      translated_size   = translated.size
+      fuzzy_size        = fuzzy.size
 
       {
-        translated: percentage(translated_size - fuzzy_size),
+        translated:   percentage(translated_size),
         untranslated: percentage(untranslated_size),
-        fuzzy: percentage(fuzzy_size)
+        fuzzy:        percentage(fuzzy_size)
       }
     end
 
