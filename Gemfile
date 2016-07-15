@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 
 group :test do
   gem 'coveralls', :require => false
-  gem 'pry-byebug', :platforms => :ruby_20
-  gem 'rspec', '~> 3.3.0'
+  gem 'pry-byebug', :platforms => :mri
+  gem 'rspec', '~> 3.5.0'
   gem 'awesome_print'
 end
 
