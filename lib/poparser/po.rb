@@ -78,6 +78,16 @@ module PoParser
       end
     end
 
+    # Finds all cached entries
+    #
+    # @return [Array] an array of cached entries
+    def cached
+      find_all do |entry|
+        entry.cached?
+      end
+    end
+    alias_method :obsolete, :cached
+
     # Count of all entries without counting cached entries
     #
     # @return [String]

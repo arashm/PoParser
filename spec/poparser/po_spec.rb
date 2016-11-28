@@ -39,6 +39,13 @@ describe PoParser::Po do
     expect(@po.untranslated.size).to eq 2
   end
 
+  it 'returns all cached strings' do
+    entry2, entry3 = entry.dup, entry.dup
+    [entry2, entry3].each { |en| en[:cached] = 'test' }
+    @po << [entry, entry2, entry3]
+    expect(@po.cached.size).to eq 2
+  end
+
   it 'shows stats' do
     entry2, entry3, entry4 = entry.dup, entry.dup, entry.dup
     [entry2, entry3].each { |en| en[:msgstr] = '' }
