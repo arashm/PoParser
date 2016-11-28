@@ -1,3 +1,6 @@
+## Version 1.0.3
+* Add `obsolete` alias for `cached` entries. Now you can use `Po#obsolete` or `Entry#obsolete?`
+
 ## Version 1.0.2
 * Update dependencies
 * Handle empty lines in .po file (thanks to @roland9)

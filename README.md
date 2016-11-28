@@ -51,6 +51,9 @@ po.untranslated
 # get all translated entries
 po.translated
 
+# get all cached/obsolete entries
+po.cached # or .obsolete alias
+
 # returns a hash representation of the PO file
 po.to_h
 
@@ -122,6 +125,8 @@ entry.translated? # or .complete? alias
 entry.fuzzy?
 #=> true
 entry.plural?
+#=> false
+entry.cached? # or .obsolete?
 #=> false
 ```
 
