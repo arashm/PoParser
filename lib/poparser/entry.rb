@@ -27,6 +27,7 @@ module PoParser
     def cached?
       !@cached.nil?
     end
+    alias_method :obsolete?, :cached?
 
     # Checks if the entry is untraslated
     #
@@ -71,7 +72,7 @@ module PoParser
       self
     end
 
-    # Set flag to a custome string
+    # Set flag to a custom string
     def flag_as(flag)
       raise ArgumentError if flag.class != String
       @flag = flag

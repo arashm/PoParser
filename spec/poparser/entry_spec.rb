@@ -99,6 +99,7 @@ describe PoParser::Entry do
 
     it 'checks for chached entries' do
       expect(@entry.cached?).to be_truthy
+      expect(@entry.obsolete?).to be_truthy
     end
 
     it 'shouldn be counted as untranslated' do
