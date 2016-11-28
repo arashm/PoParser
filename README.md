@@ -38,9 +38,8 @@ The `parse` method returns a `PO` object which contains all `Entries`:
 # get all entries
 po.entries # or .all alias
 
-# including cached entries (started with "#~", these
-# entries are just kept by program for later use and are
-# not counted as active entries)
+# including cached/obsolete entries (started with "#~")
+# more info: https://www.gnu.org/software/gettext/manual/html_node/Obsolete-Entries.html
 po.entries(true)
 
 # get all fuzzy entries
