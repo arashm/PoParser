@@ -18,6 +18,8 @@ module PoParser
       define_reader_methods
 
       self.class.send(:alias_method, :translate, :msgstr=)
+      self.class.send(:alias_method, :obsolete, :cached)
+      self.class.send(:alias_method, :obsolete=, :cached=)
     end
 
     # If entry doesn't have any msgid, it's probably a cached entry that is

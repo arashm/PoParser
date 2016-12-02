@@ -104,7 +104,7 @@ refrence
 extracted_comment
 flag
 previous_untraslated_string
-cached
+cached # obsolete entries
 msgid
 msgid_plural
 msgstr
