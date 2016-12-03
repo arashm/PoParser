@@ -34,6 +34,11 @@ module PoParser
       end
       string << "msgid \"\"\nmsgstr \"\""
       configs.each do |k, v|
+        if v.nil? || v.empty?
+          puts "WARNING: \"#{k}\" header field is empty and skipped"
+          next
+        end
+
         string << "#{k}: #{v}\n".dump
       end
       string.join("\n")
