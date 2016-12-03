@@ -39,7 +39,7 @@ module PoParser
     rule(:msgctxt)      { spaced('msgctxt') >> msg_text_line >> multiline.repeat }
 
     # Helpers
-    rule(:space)       { match['[^\S\n]'] } #match only whitespace and not newline
+    rule(:space)       { match['[^\S\n]'].repeat } #match only whitespace and not newline
     rule(:space?)      { space.maybe }
     rule(:newline)     { match["\n"] }
     rule(:eol)         { newline | any.absent? }

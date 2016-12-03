@@ -1,11 +1,10 @@
-#encoding: utf-8
-require "spec_helper"
+# encoding: utf-8
+require 'spec_helper'
 
 describe PoParser::Parser do
   let(:po) { PoParser::Parser.new }
 
   context(:comments) do
-
     let(:tc)  { po.translator_comment }
     let(:rc)  { po.refrence }
     let(:ec)  { po.extracted_comment }
@@ -35,7 +34,6 @@ describe PoParser::Parser do
       expect(pusc).to parse("#| \"Hello,\\n\"\n")
       expect(pusc).to parse("#| \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is \"\n")
     end
-
   end
 
   context 'Entries' do
@@ -46,11 +44,13 @@ describe PoParser::Parser do
     it 'parses msgid' do
       expect(msgid).to parse "msgid \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
       expect(msgid).to parse "msgid \"The new \"state\" of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
+      expect(msgid).to parse "msgid     \"The new \"state\" of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
     end
 
     it 'parses msgstr' do
       expect(msgstr).to parse "msgstr \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
       expect(msgstr).to parse "msgstr \"فعالیت نامعتبر. شاید یک نفر دیگر دقیقا قبل از شما یک فعالیت دیگر ارسال کرده ۱۲۳۱۲۳۱safda \"\n"
+      expect(msgstr).to parse "msgstr     \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is now \"\n"
     end
 
     it 'parses multiline entries' do
@@ -60,10 +60,13 @@ describe PoParser::Parser do
     end
 
     it 'parses plural msgstr entries' do
-      str = "msgstr[0] \"\""
+      str1 = "msgstr[0] \"\""
+      str2 = "msgstr[0]  \"\""
+      str3 = "msgstr[0]\"\""
       result = [{:msgstr_plural=>{:plural_id=>"0", :text=>""}}]
-      expect(po.parse(str)).to eq(result)
+      expect(po.parse(str1)).to eq(result)
+      expect(po.parse(str2)).to eq(result)
+      expect(po.parse(str3)).to eq(result)
     end
   end
-
 end
