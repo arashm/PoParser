@@ -9,6 +9,7 @@ require 'poparser'
 require 'parslet/rig/rspec'
 require 'coveralls'
 require 'awesome_print'
+require 'pry'
 
 Coveralls.wear!
 

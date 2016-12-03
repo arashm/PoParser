@@ -8,7 +8,7 @@ group :test do
 end
 
 group :development do
-  gem 'pry'
+  gem 'pry-byebug', :platforms => :mri
   gem 'guard-rspec'
 end
 
