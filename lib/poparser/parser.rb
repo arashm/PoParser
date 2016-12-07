@@ -7,7 +7,7 @@ module PoParser
 
     # Comments
     rule(:comments) do
-      refrence |
+      reference |
       extracted_comment | flag |
       previous_untraslated_string |
       cached |
@@ -16,14 +16,14 @@ module PoParser
 
     rule(:translator_comment)         { spaced('#') >> comment_text_line.as(:translator_comment) }
     rule(:extracted_comment)          { spaced('#.') >> comment_text_line.as(:extracted_comment) }
-    rule(:refrence)                   { spaced('#:') >> comment_text_line.as(:refrence) }
+    rule(:reference)                   { spaced('#:') >> comment_text_line.as(:reference) }
     rule(:flag)                       { spaced('#,') >> comment_text_line.as(:flag) }
     rule(:previous_untraslated_string){ spaced('#|') >> comment_text_line.as(:previous_untraslated_string) }
     rule(:cached)                     { spaced('#~') >> comment_text_line.as(:cached) }
 
     # Entries
     rule(:entries) do
-      msgid.as(:msgid) | 
+      msgid.as(:msgid) |
       msgid_plural.as(:msgid_plural) |
       msgstr.as(:msgstr) |
       msgstr_plural.as(:msgstr_plural) |
@@ -65,4 +65,3 @@ module PoParser
     end
   end
 end
-

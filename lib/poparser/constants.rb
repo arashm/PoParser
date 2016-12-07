@@ -2,7 +2,7 @@ module PoParser
   COMMENTS_LABELS = {
     :translator_comment => '#',
     :extracted_comment => '#.',
-    :refrence => '#:',
+    :reference => '#:',
     :flag => '#,',
     :previous_untraslated_string => '#|',
     :cached => '#~'

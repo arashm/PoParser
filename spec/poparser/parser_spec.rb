@@ -7,7 +7,7 @@ describe PoParser::Parser do
   context(:comments) do
 
     let(:tc)  { po.translator_comment }
-    let(:rc)  { po.refrence }
+    let(:rc)  { po.reference }
     let(:ec)  { po.extracted_comment }
     let(:fc)  { po.flag }
     let(:pusc){ po.previous_untraslated_string }

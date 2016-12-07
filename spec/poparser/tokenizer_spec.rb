@@ -5,7 +5,7 @@ describe PoParser::Tokenizer do
   let(:token)  { PoParser::Tokenizer.new }
   let(:po_file){ Pathname.new('spec/poparser/fixtures/tokenizer.po').realpath }
   let(:po_file_empty_line){ Pathname.new('spec/poparser/fixtures/tokenizer_empty_line.po').realpath }
-  let(:result) { [{:refrence=>"templates:105", :msgid=>"Afrikaans", :msgstr=>"آفریقایی"}, {:flag=>"fuzzy", :msgid=>"Afrikaans", :msgstr=>"آفریقایی" }] }
+  let(:result) { [{:reference=>"templates:105", :msgid=>"Afrikaans", :msgstr=>"آفریقایی"}, {:flag=>"fuzzy", :msgid=>"Afrikaans", :msgstr=>"آفریقایی" }] }
 
   it 'should be able to extracts entries' do
     expect(

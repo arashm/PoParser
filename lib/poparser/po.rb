@@ -15,7 +15,7 @@ module PoParser
     # @example
     #   entry = {
     #             translator_comment: 'comment',
-    #             refrence: 'refrense comment',
+    #             reference: 'reference comment',
     #             flag: 'fuzzy',
     #             msgid: 'translatable string',
     #             msgstr: 'translation'

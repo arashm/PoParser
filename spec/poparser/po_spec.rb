@@ -5,7 +5,7 @@ describe PoParser::Po do
   let (:entry) do
     {
       translator_comment: 'comment',
-      refrence: 'refrence comment',
+      reference: 'reference comment',
       msgid: 'untranslated',
       msgstr: 'translated string'
     }

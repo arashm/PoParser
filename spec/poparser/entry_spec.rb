@@ -8,7 +8,7 @@ describe PoParser::Entry do
   end
 
   let(:labels) do
-    [:refrence, :extracted_comment, :flag, :previous_untraslated_string,
+    [:reference, :refrence, :extracted_comment, :flag, :previous_untraslated_string,
       :translator_comment, :msgid, :msgid_plural, :msgstr, :msgctxt]
   end
 
