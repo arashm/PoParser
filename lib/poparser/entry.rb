@@ -20,6 +20,9 @@ module PoParser
       self.class.send(:alias_method, :translate, :msgstr=)
       self.class.send(:alias_method, :obsolete, :cached)
       self.class.send(:alias_method, :obsolete=, :cached=)
+      # alias for backward compatibility of this typo
+      self.class.send(:alias_method, :refrence, :reference)
+      self.class.send(:alias_method, :refrence=, :reference)
     end
 
     # If entry doesn't have any msgid, it's probably a cached entry that is

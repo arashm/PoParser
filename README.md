@@ -66,7 +66,7 @@ You can add a new entry to the PO file:
 ```ruby
 new_entry = {
               translator_comment: 'comment',
-              refrence: 'refrence comment',
+              reference: 'reference comment',
               msgid: 'untranslated',
               msgstr: 'translated string'
             }
@@ -84,7 +84,7 @@ Adding plural string is the same:
 ```ruby
 new_entry = {
               translator_comment: 'comment',
-              refrence: 'refrence comment',
+              reference: 'reference comment',
               msgid_plural: 'untranslated',
               'msgstr[0]': 'translated string',
               'msgstr[1]': 'translated string'
@@ -100,7 +100,7 @@ Each entry can have following properties (for more information see [GNU PO file 
 
 ```
 translator_comment
-refrence
+reference
 extracted_comment
 flag
 previous_untraslated_string
