@@ -22,7 +22,7 @@ module PoParser
     end
 
     def to_str
-      @value
+      @value.is_a?(Array) ? @value.join : @value
     end
 
     def inspect

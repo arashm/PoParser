@@ -7,7 +7,7 @@ module PoParser
 
     def initialize(entry)
       @entry            = entry
-      @comments         = entry.translator_comment.to_s
+      @comments         = entry.translator_comment.value
       @original_configs = convert_msgstr_to_hash(entry.msgstr)
 
       HEADER_LABELS.each do |k, v|
