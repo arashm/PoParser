@@ -102,6 +102,23 @@ describe PoParser::Po do
       expect(@po.header.comments).to eq(["Arash Mousavi <mousavi.arash@gmail.com>, 2014.", ""])
     end
 
+    it 'should parse the flag and be fuzzy' do
+      puts @po.header.flag.inspect
+      puts @po.header.flag.class
+      expect(@po.header.flag.to_s).to eq('fuzzy')
+      expect(@po.header.fuzzy?).to eq(true)
+    end
+
+    it 'should flag a entry as fuzzy' do
+      expect(@po.header.flag_as_fuzzy).to be_truthy
+      expect(@po.header.flag).to eq('fuzzy')
+    end
+
+    it 'should be able to set a custome flag' do
+      expect(@po.header.flag_as 'python-format').to be_truthy
+      expect(@po.header.flag).to eq('python-format')
+    end
+
     it 'throws error if there\'re two header string' do
       path = Pathname.new('spec/poparser/fixtures/header_error.po').realpath
       expect{
