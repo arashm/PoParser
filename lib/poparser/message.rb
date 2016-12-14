@@ -1,46 +1,45 @@
 module PoParser
   class Message
-    attr_accessor :type
-    attr_writer :str
+    attr_accessor :type, :value
 
-    def initialize(type, str)
+    def initialize(type, value)
       @type = type
-      @str  = str
+      @value  = value
 
       remove_empty_line
     end
 
     def str
-      @str.is_a?(Array) ? @str.join : @str
+      @value.is_a?(Array) ? @value.join : @value
     end
 
     def to_s(with_label = false)
-      return @str unless with_label
-      if @str.is_a? Array
+      return to_str unless with_label
+      if @value.is_a? Array
         remove_empty_line
         # multiline messages should be started with an empty line
         lines = ["#{label} \"\"\n"]
-        @str.each do |str|
+        @value.each do |str|
           lines << "\"#{str}\"\n"
         end
         return lines.join
       else
-        "#{label} \"#{@str}\"\n"
+        "#{label} \"#{@value}\"\n"
       end
     end
 
     def to_str
-      @str.is_a?(Array) ? @str.join : @str
+      @value.is_a?(Array) ? @value.join : @value
     end
 
     def inspect
-      @str
+      @value
     end
 
   private
     def remove_empty_line
-      if @str.is_a? Array
-        @str.shift if @str.first == ''
+      if @value.is_a? Array
+        @value.shift if @value.first == ''
       end
     end
 

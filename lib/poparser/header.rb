@@ -46,7 +46,7 @@ module PoParser
 
   private
     def convert_msgstr_to_hash(msgstr)
-      options_array = msgstr.to_s.map do |options|
+      options_array = msgstr.value.map do |options|
         options.split(':', 2).each do |k|
           k.strip!
           k.chomp!
@@ -70,4 +70,3 @@ module PoParser
     end
   end
 end
-
