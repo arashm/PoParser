@@ -46,7 +46,7 @@ module PoParser
     rule(:character)   { escaped | text }
     rule(:text)        { any }
     rule(:escaped)     { str('\\') >> any }
-    rule(:msg_line_end){ str('"') >> eol }
+    rule(:msg_line_end){ str('"') >> space? >> eol }
 
     rule(:comment_text_line) do
       (eol.absent? >> character).repeat.maybe.as(:text) >> eol
