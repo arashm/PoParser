@@ -9,7 +9,7 @@ module PoParser
       @entry            = entry
       @comments         = entry.translator_comment.to_s
       @original_configs = convert_msgstr_to_hash(entry.msgstr)
-      @flag = entry.flag
+      @flag             = entry.flag
 
       HEADER_LABELS.each do |k, v|
         instance_variable_set "@#{k.to_s}".to_sym, @original_configs[v]
@@ -30,7 +30,6 @@ module PoParser
     def fuzzy?
       @flag.to_s.match('fuzzy') ? true : false
     end
-
 
     # Flag the entry as Fuzzy
     # @return [Header]

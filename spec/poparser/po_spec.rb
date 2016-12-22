@@ -103,8 +103,6 @@ describe PoParser::Po do
     end
 
     it 'should parse the flag and be fuzzy' do
-      puts @po.header.flag.inspect
-      puts @po.header.flag.class
       expect(@po.header.flag.to_s).to eq('fuzzy')
       expect(@po.header.fuzzy?).to eq(true)
     end
