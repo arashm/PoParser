@@ -152,7 +152,7 @@ It's possible to get Hash and String representation of the `Entry`:
 
 ```ruby
 entry.to_h
-entry.to_s(true)
+entry.to_s
 ```
 
 ### Searching
