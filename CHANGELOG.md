@@ -1,3 +1,10 @@
+
+2.0.0 / 2016-12-22
+==================
+
+  * `Comment#to_s` now returns string instead of array (backward incompatible)
+  * Parser won't choke on cases where there are spaces before eol
+
 1.1.0 / 2016-12-07
 ==================
 
