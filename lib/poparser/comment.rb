@@ -1,32 +1,32 @@
 module PoParser
   class Comment
-    attr_accessor :type, :str
+    attr_accessor :type, :value
 
-    def initialize(type, str)
+    def initialize(type, value)
       @type = type
-      @str  = str
+      @value  = value
     end
 
     def to_s(with_label = false)
-      return @str unless with_label
-      if @str.is_a? Array
+      return to_str unless with_label
+      if @value.is_a? Array
         string = []
-        @str.each do |str|
+        @value.each do |str|
           string << "#{COMMENTS_LABELS[@type]} #{str}\n".gsub(/[^\S\n]+$/, '')
         end
         return string.join
       else
         # removes the space but not newline at the end
-        "#{COMMENTS_LABELS[@type]} #{@str}\n".gsub(/[^\S\n]+$/, '')
+        "#{COMMENTS_LABELS[@type]} #{@value}\n".gsub(/[^\S\n]+$/, '')
       end
     end
 
     def to_str
-      @str
+      @value.is_a?(Array) ? @value.join : @value
     end
 
     def inspect
-      @str
+      @value
     end
   end
 end

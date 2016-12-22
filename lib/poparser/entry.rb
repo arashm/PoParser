@@ -146,7 +146,7 @@ module PoParser
             if instance_variable_get("@#{type}".to_sym).is_a? object
               klass      = instance_variable_get "@#{type}".to_sym
               klass.type = type
-              klass.str  = val
+              klass.value  = val
             else
               instance_variable_set "@#{type}".to_sym, object.new(type, val)
             end
