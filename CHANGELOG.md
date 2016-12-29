@@ -1,4 +1,10 @@
 
+2.0.1 / 2016-12-29
+==================
+
+  * header handles flags, especially the fuzzy flag (#13)
+  * Update README.md
+
 2.0.0 / 2016-12-22
 ==================
 
