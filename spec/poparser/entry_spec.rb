@@ -8,7 +8,7 @@ describe PoParser::Entry do
   end
 
   let(:labels) do
-    PoParser::LABELS + [:refrence, :previous_untraslated_string]  # backward typos
+    PoParser::LABELS + [:refrence]  # backward typos
   end
 
   it 'should respond to labels' do
@@ -32,10 +32,6 @@ describe PoParser::Entry do
   it 'should translate the entry' do
     @entry.translate ('this entry is translated')
     expect(@entry.msgstr.to_s).to eq 'this entry is translated'
-  end
-
-  it 'should respond to previous_untraslated_string' do
-
   end
 
   it 'checks if the entry is translated' do

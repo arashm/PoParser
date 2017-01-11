@@ -25,19 +25,6 @@ module PoParser
       self.class.send(:alias_method, :refrence=, :reference)
     end
 
-    def previous_untraslated_string
-      if @previous_msgctxt | @previous_msgid | @previous_msgid_plural
-        previous_untraslated_string = ""
-        previous_untraslated_string += @previous_msgctxt.to_s(true) if @previous_msgctxt
-        previous_untraslated_string += @previous_msgid.to_s(true) if @previous_msgid
-        previous_untraslated_string += @previous_msgid_plural.to_s(true) if @previous_msgid_plural
-        previous_untraslated_string
-      else
-        nil
-      end
-    end
-
-
     # If entry doesn't have any msgid, it's probably a cached entry that is
     # kept by the program for later use. These entries will usually start with: #~
     #
