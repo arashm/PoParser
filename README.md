@@ -142,6 +142,16 @@ entry.msgstr.to_s
 #=> "This entry is translated"
 ```
 
+But be careful with plural messages, there msgstr is an array
+```ruby
+if entry.plural?
+  entry.msgstr.each do |msgstr|
+    msgstr.to_s
+    #=> This is one of the plural translations
+  end  
+end  
+```
+
 You can mark an entry as fuzzy:
 
 ```ruby
