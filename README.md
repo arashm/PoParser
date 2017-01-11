@@ -103,7 +103,9 @@ translator_comment
 reference
 extracted_comment
 flag
-previous_untraslated_string
+previous_msgctxt
+previous_msgid
+previous_msgid_plural
 cached # obsolete entries
 msgid
 msgid_plural
