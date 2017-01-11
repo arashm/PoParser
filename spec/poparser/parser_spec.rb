@@ -9,7 +9,9 @@ describe PoParser::Parser do
     let(:rc)  { po.reference }
     let(:ec)  { po.extracted_comment }
     let(:fc)  { po.flag }
-    let(:pusc){ po.previous_untraslated_string }
+    let(:pmsgctxtc){ po.previous_msgctxt }
+    let(:pmsgidc){ po.previous_msgid }
+    let(:pmsgid_pluralc){ po.previous_msgid_plural }
 
     it 'parses the translator comment' do
       expect(tc).to parse("# Persian translation for damned-lies 123123\n")
@@ -29,11 +31,37 @@ describe PoParser::Parser do
       expect(fc).to parse("#, python-format\n")
     end
 
-    it 'parses previous_untraslated_string' do
-      expect(pusc).to parse("#| msgid \"\"\n")
-      expect(pusc).to parse("#| \"Hello,\\n\"\n")
-      expect(pusc).to parse("#| \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is \"\n")
+    it 'parses previous msgctxt' do
+      # single line
+      expect(pmsgctxtc).to parse("#| msgctxt \"Context\"\n")
+      # multiline
+      pmsgctxt = "#| msgctxt \"\"\n"
+      pmsgctxt += "#| \"Multiline context\\n\"\n"
+      pmsgctxt += "#| \"cause its fun\"\n"
+      expect(pmsgctxtc).to parse(pmsgctxt)
     end
+
+    it 'parses previous msgid' do
+      # single line
+      expect(pmsgidc).to parse("#| msgid \"Hi there\"\n")
+      # multiline
+      pmsgid = "#| msgid \"\"\n"
+      pmsgid += "#| \"Hello,\\n\"\n"
+      pmsgid += "#| \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is \"\n"
+      expect(pmsgidc).to parse(pmsgid)
+    end
+
+    it 'parses previous msgid_plural' do
+      # single line
+      expect(pmsgid_pluralc).to parse("#| msgid_plural \"Hi there\"\n")
+      # multiline
+      pmsgid_plural = "#| msgid_plural \"\"\n"
+      pmsgid_plural += "#| \"Hello,\\n\"\n"
+      pmsgid_plural += "#| \"The new state of %(module)s - %(branch)s - %(domain)s (%(language)s) is \"\n"
+      expect(pmsgid_pluralc).to parse(pmsgid_plural)
+    end
+
+
   end
 
   context 'Entries' do
