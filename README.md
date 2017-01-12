@@ -103,7 +103,9 @@ translator_comment
 reference
 extracted_comment
 flag
-previous_untraslated_string
+previous_msgctxt
+previous_msgid
+previous_msgid_plural
 cached # obsolete entries
 msgid
 msgid_plural
@@ -138,6 +140,16 @@ entry.msgid.to_s
 entry.translate("This entry is translated") # or `msgstr=` alias
 entry.msgstr.to_s
 #=> "This entry is translated"
+```
+
+But be careful with plural messages, there msgstr is an array
+```ruby
+if entry.plural?
+  entry.msgstr.each do |msgstr|
+    msgstr.to_s
+    #=> This is one of the plural translations
+  end  
+end  
 ```
 
 You can mark an entry as fuzzy:

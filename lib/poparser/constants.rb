@@ -4,7 +4,9 @@ module PoParser
     :extracted_comment => '#.',
     :reference => '#:',
     :flag => '#,',
-    :previous_untraslated_string => '#|',
+    :previous_msgctxt => '#| msgctxt',
+    :previous_msgid => '#| msgid',
+    :previous_msgid_plural => '#| msgid_plural',
     :cached => '#~'
   }
 

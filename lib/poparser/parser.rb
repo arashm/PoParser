@@ -7,19 +7,27 @@ module PoParser
 
     # Comments
     rule(:comments) do
-      reference |
-      extracted_comment | flag |
-      previous_untraslated_string |
-      cached |
-      translator_comment
+      reference.as(:reference) |
+      extracted_comment.as(:extracted_comment) |
+      flag.as(:flag) |
+      previous_msgctxt.as(:previous_msgctxt) |
+      previous_msgid.as(:previous_msgid) |
+      previous_msgid_plural.as(:previous_msgid_plural) |
+      cached.as(:cached) |
+      translator_comment.as(:translator_comment)
     end
 
-    rule(:translator_comment)         { spaced('#') >> comment_text_line.as(:translator_comment) }
-    rule(:extracted_comment)          { spaced('#.') >> comment_text_line.as(:extracted_comment) }
-    rule(:reference)                   { spaced('#:') >> comment_text_line.as(:reference) }
-    rule(:flag)                       { spaced('#,') >> comment_text_line.as(:flag) }
-    rule(:previous_untraslated_string){ spaced('#|') >> comment_text_line.as(:previous_untraslated_string) }
-    rule(:cached)                     { spaced('#~') >> comment_text_line.as(:cached) }
+    rule(:translator_comment)       { spaced('#') >> comment_text_line }
+    rule(:extracted_comment)        { spaced('#.') >> comment_text_line }
+    rule(:reference)                { spaced('#:') >> comment_text_line }
+    rule(:flag)                     { spaced('#,') >> comment_text_line }
+    rule(:previous_msgctxt)         { spaced('#| msgctxt') >> msg_text_line >> previous_multiline.repeat }
+    rule(:previous_msgid)           { spaced('#| msgid') >> msg_text_line >> previous_multiline.repeat }
+    rule(:previous_msgid_plural)    { spaced('#| msgid_plural') >> msg_text_line >> previous_multiline.repeat }
+    rule(:cached)                   { spaced('#~') >> comment_text_line }
+
+    rule(:previous_multiline)       { previous_multiline_start.present? >> spaced('#|') >> msg_text_line.repeat.maybe }
+    rule(:previous_multiline_start) { spaced('#|') >> str('"') }
 
     # Entries
     rule(:entries) do

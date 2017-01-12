@@ -8,8 +8,7 @@ describe PoParser::Entry do
   end
 
   let(:labels) do
-    [:reference, :refrence, :extracted_comment, :flag, :previous_untraslated_string,
-      :translator_comment, :msgid, :msgid_plural, :msgstr, :msgctxt]
+    PoParser::LABELS + [:refrence]  # backward typos
   end
 
   it 'should respond to labels' do
@@ -87,6 +86,24 @@ describe PoParser::Entry do
       @entry.msgstr = ['first line', 'second line']
       result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
       expect(@entry.to_s).to eq(result)
+    end
+  end
+
+  context 'Previous' do
+    it 'should be able to show content of previous_msgid' do
+      @entry.previous_msgid = 'Hello'
+      result = "Hello"
+      result_with_label = "#| msgid \"Hello\"\n"
+      expect(@entry.previous_msgid.to_s).to eq result
+      expect(@entry.previous_msgid.to_s(true)).to eq result_with_label
+    end
+
+    it 'convert multiline entries to string' do
+      @entry.previous_msgid = ['first line', 'second line']
+      result = "first linesecond line"
+      result_with_label = "#| msgid \"\"\n#| \"first line\"\n#| \"second line\"\n"
+      expect(@entry.previous_msgid.to_s).to eq result
+      expect(@entry.previous_msgid.to_s(true)).to eq result_with_label
     end
   end
 
