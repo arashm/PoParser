@@ -220,6 +220,16 @@ You can get and set following variables from `header`:
 * Update header after changing/saving po
 * add `before_save` and `after_save` callbacks
 
+##Authors
+
+[Arash Mousavi](https://github.com/arashm)
+
+### [Contributors](https://github.com/arashm/PoParser/contributors)
+ - [Dennis-Florian Herr](https://github.com/dfherr)
+ - [Roland Gropmair](https://github.com/roland9)
+
+License: [MIT](https://github.com/arashm/PoParser/blob/master/LICENSE.txt)
+
 ## Contributing
 
 1. Fork it ( http://github.com/arashm/poparser/fork )
