@@ -1,5 +1,5 @@
 module PoParser
-  module GenerateBenchmarkFile
+  module RandomPoFileGenerator
     require 'securerandom'
     def self.generate_file(file_path, length = 1000)
       obsoletes = 10

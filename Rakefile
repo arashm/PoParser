@@ -9,8 +9,8 @@ task :default => :spec
 require 'geminabox-release'
 GeminaboxRelease.patch(:use_config => true, :remove_release => true)
 
-desc "Generate a benchmark file"
-task 'generate_benchmark_file' do
-  require_relative 'spec/utils/generate_benchmark_file'
-  PoParser::GenerateBenchmarkFile.generate_file(File.expand_path("test/benchmark.po", __dir__), 1500)
+desc "Generate a random po file"
+task 'generate_random_pofile' do
+  require_relative 'spec/utils/random_pofile_generator'
+  PoParser::RandomPoFileGenerator.generate_file(File.expand_path("test/benchmark.po", __dir__), 1000)
 end
