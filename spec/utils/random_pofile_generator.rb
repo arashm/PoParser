@@ -1,8 +1,7 @@
 module PoParser
   module RandomPoFileGenerator
     require 'securerandom'
-    def self.generate_file(file_path, length = 1000)
-      obsoletes = 10
+    def self.generate_file(file_path, length = 1000, obsoletes = 10)
       header = "# PO benchmark file header
 #
 #, fuzzy
@@ -19,7 +18,7 @@ msgstr \"\"
           file.write generate_random_message
         end
 
-        for i in 0..obsoletes do
+        for i in 0...obsoletes do
           file.write generate_random_message(true)
         end
       end
