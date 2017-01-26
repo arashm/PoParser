@@ -4,6 +4,7 @@ require 'parslet'
 # Local files
 require 'poparser/constants'
 require 'poparser/parser'
+require 'poparser/improved_parser'
 require 'poparser/transformer'
 require 'poparser/tokenizer'
 require 'poparser/comment'

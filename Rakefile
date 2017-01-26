@@ -128,7 +128,6 @@ namespace :benchmark do
   end
 
   namespace :improve do
-
     # override some benchmarks improving the monkey patched methods to compare
     desc "Benchmark only parslet speed of parsing test/benchmark.po 10 times"
     task 'parse' do
@@ -142,7 +141,7 @@ namespace :benchmark do
       PoParser::Tokenizer.class_eval do
         # monkey patch tokenizer so it only parses, no PO object generation
         def initialize
-          @parser = PoParser::Parser.new
+          @parser = PoParser::ImprovedParser.new
         end
 
         def extract_entries(path)
@@ -160,7 +159,57 @@ namespace :benchmark do
 
       pofile = File.expand_path("test/benchmark.po", __dir__)
       Benchmark.bmbm do |x|
-        x.report("parse:") {10.times { PoParser.parse(pofile) }}
+        x.report("improved1:") {10.times { PoParser.parse(pofile) }}
+      end
+    end
+
+    # override some benchmarks improving the monkey patched methods to compare
+    desc "Compare benchmark of parslet original and improved parsing speed of test/benchmark.po 10 times"
+    task 'parse_compare' do
+
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block.strip)
+          end
+          true
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = @parser.parse(block)
+        end
+      end
+
+      include Benchmark
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      Benchmark.benchmark(CAPTION, 10, FORMAT, "default:" , "improved:") do |x|
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::Parser.new
+          end
+        end
+        d1 = x.report("default1:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::ImprovedParser.new
+          end
+        end
+        i1 = x.report("improved1:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::Parser.new
+          end
+        end
+        d2 = x.report("default2:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::ImprovedParser.new
+          end
+        end
+        i2= x.report("improved2:") {10.times { PoParser.parse(pofile) }}
+        [d1+d2, i1+i2]
       end
     end
 
