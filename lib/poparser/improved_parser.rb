@@ -4,31 +4,35 @@ module PoParser
 
     rule(:document) { comment.repeat >> entry.repeat }
 
-    rule(:comment)  { str('#').present? >> comments }
-    rule(:entry)    { str('msg').present? >> entries }
+    rule(:comment)  { str('#') >> comments }
+    rule(:entry)    { str('msg') >> entries }
     # Comments
     rule(:comments) do
       reference.as(:reference) |
       extracted_comment.as(:extracted_comment) |
       flag.as(:flag) |
-      previous_msgctxt.as(:previous_msgctxt) |
-      previous_msgid.as(:previous_msgid) |
-      previous_msgid_plural.as(:previous_msgid_plural) |
+      previous |
       cached.as(:cached) |
       translator_comment.as(:translator_comment)
     end
 
-    rule(:translator_comment)       { spaced('#') >> comment_text_line }
-    rule(:extracted_comment)        { spaced('#.') >> comment_text_line }
-    rule(:reference)                { spaced('#:') >> comment_text_line }
-    rule(:flag)                     { spaced('#,') >> comment_text_line }
-    rule(:previous_msgctxt)         { spaced('#| msgctxt') >> msg_text_line >> previous_multiline.repeat }
-    rule(:previous_msgid)           { spaced('#| msgid') >> msg_text_line >> previous_multiline.repeat }
-    rule(:previous_msgid_plural)    { spaced('#| msgid_plural') >> msg_text_line >> previous_multiline.repeat }
-    rule(:cached)                   { spaced('#~') >> comment_text_line }
+    rule(:translator_comment)       { space >> comment_text_line }
+    rule(:extracted_comment)        { str('.') >> space >> comment_text_line }
+    rule(:reference)                { str(':') >> space >> comment_text_line }
+    rule(:flag)                     { str(',') >> space >> comment_text_line }
+    rule(:previous)                 { str('| msg') >> (
+                                        previous_msgctxt.as(:previous_msgctxt) |
+                                        previous_msgid.as(:previous_msgid) |
+                                        previous_msgid_plural.as(:previous_msgid_plural)
+                                        )
+                                    }
+    rule(:previous_msgctxt)         { str('ctxt') >> space >> msg_text_line >> previous_multiline.repeat }
+    rule(:previous_msgid)           { str('id') >> space >> msg_text_line >> previous_multiline.repeat }
+    rule(:previous_msgid_plural)    { str('id_plural') >> space >> msg_text_line >> previous_multiline.repeat }
+    rule(:cached)                   { str('~') >> space >> comment_text_line }
 
     rule(:previous_multiline)       { previous_multiline_start.present? >> spaced('#|') >> msg_text_line.repeat.maybe }
-    rule(:previous_multiline_start) { spaced('#|') >> str('"') }
+    rule(:previous_multiline_start) { str('#|') >> space >> str('"') }
 
     # Entries
     rule(:entries) do
@@ -40,12 +44,12 @@ module PoParser
     end
 
     rule(:multiline)    { str('"').present? >> msg_text_line.repeat.maybe }
-    rule(:msgid)        { spaced('msgid') >> msg_text_line >> multiline.repeat }
-    rule(:msgid_plural) { spaced('msgid_plural') >> msg_text_line >> multiline.repeat }
+    rule(:msgid)        { str('id') >> space >> msg_text_line >> multiline.repeat }
+    rule(:msgid_plural) { str('id_plural') >> space >> msg_text_line >> multiline.repeat }
 
-    rule(:msgstr)       { spaced('msgstr') >> msg_text_line >> multiline.repeat }
-    rule(:msgstr_plural){ str('msgstr') >> bracketed(match["[0-9]"].as(:plural_id)) >> space? >> msg_text_line >> multiline.repeat }
-    rule(:msgctxt)      { spaced('msgctxt') >> msg_text_line >> multiline.repeat }
+    rule(:msgstr)       { str('str') >> space >> msg_text_line >> multiline.repeat }
+    rule(:msgstr_plural){ str('str') >> space >> bracketed(match["[0-9]"].as(:plural_id)) >> space? >> msg_text_line >> multiline.repeat }
+    rule(:msgctxt)      { str('ctxt') >> space >> msg_text_line >> multiline.repeat }
 
     # Helpers
     rule(:space)       { match['\p{Blank}'].repeat } #match only whitespace and not newline

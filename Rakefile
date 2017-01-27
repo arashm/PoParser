@@ -143,7 +143,7 @@ namespace :benchmark do
     $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     $char_count = $char_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
-    puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{} chars"
+    puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{$char_count} chars"
     puts "Thats #{lookups_per_parse} lookups per parse and #{lookups_per_char} lookups per char"
   end
 
@@ -262,7 +262,7 @@ namespace :benchmark do
       $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
       $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
       $char_count = $char_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
-      puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{} chars"
+      puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{$char_count} chars"
       puts "Thats #{lookups_per_parse} lookups per parse and #{lookups_per_char} lookups per char"
     end
 
