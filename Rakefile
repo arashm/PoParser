@@ -159,7 +159,79 @@ namespace :benchmark do
 
       pofile = File.expand_path("test/benchmark.po", __dir__)
       Benchmark.bmbm do |x|
-        x.report("improved1:") {10.times { PoParser.parse(pofile) }}
+        x.report("improved:") {10.times { PoParser.parse(pofile) }}
+      end
+    end
+
+
+    desc "Bench with debug"
+    task 'parse_with_debug' do
+      require 'parslet/convenience'
+      # Parslet::Atoms::Context.class_eval do
+      #   def lookup(obj, pos)
+      #     p obj
+      #     @cache[pos][obj.object_id]
+      #   end
+      # end
+
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+          @parser = PoParser::ImprovedParser.new
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block.strip)
+          end
+          true
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = @parser.parse_with_debug(block)
+        end
+      end
+
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      Benchmark.bmbm do |x|
+        x.report("debug:") {2.times { PoParser.parse(pofile) }}
+      end
+    end
+
+
+    desc "Bench benchmark/small with debug"
+    task 'parse_small_with_debug' do
+      require 'parslet/convenience'
+      # Parslet::Atoms::Context.class_eval do
+      #   def lookup(obj, pos)
+      #     p obj
+      #     @cache[pos][obj.object_id]
+      #   end
+      # end
+
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+          @parser = PoParser::ImprovedParser.new
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block.strip)
+          end
+          true
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = @parser.parse_with_debug(block)
+        end
+      end
+
+      pofile = File.expand_path("test/benchmark_small.po", __dir__)
+      Benchmark.bmbm do |x|
+        x.report("debug s:") {2.times { PoParser.parse(pofile) }}
       end
     end
 

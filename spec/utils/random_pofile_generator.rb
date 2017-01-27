@@ -7,13 +7,19 @@ module PoParser
 #, fuzzy
 msgid \"\"
 msgstr \"\"
-\"Project-Id-Version: damned-lies master\\n\"
-\"Report-Msgid-Bugs-To: \\n\""
+\"Project-Id-Version: somehwat master\\n\"
+\"Report-Msgid-Bugs-To: \\n\"
+\"Last-Translator: last t <last.transh@e.mail>\\n\"
+\"Language-Team: team\\n\"
+\"Content-Type: text/plain; charset=UTF-8\\n\"
+\"MIME-Version: 1.0\\n\"
+\"Content-Transfer-Encoding: 8bit\\n\"
+\"Plural-Forms: nplurals=1; plural=0;\\n\""
 
       @random = Random.new
       File.open(file_path, 'w+') do |file|
         file.write header
-        file.write "\n"
+        file.write "\n\n"
         for i in 0..length-obsoletes do
           file.write generate_random_message
         end
@@ -32,17 +38,17 @@ msgstr \"\"
 
       untranslated_chance = 0.05
       fuzzy_chance = 0.1
-      plural_chance = 0.05
-      multiline_chance = 0.05
+      plural_chance = 0.1
+      multiline_chance = 0.1
       translator_comment_chance = 0.2
-      extracted_comment_chance = 0.01
+      extracted_comment_chance = 0.05
       msgctxt_chance = 0.9
       reference_chance = 0.9
       multiple_reference_chance = 0.1
 
       plural = @random.rand < plural_chance ? true : false
       untranslated = @random.rand < untranslated_chance ? true : false
-      fuzzy = untranslated && @random.rand < fuzzy_chance ? true : false
+      fuzzy = !untranslated && @random.rand < fuzzy_chance ? true : false
       multiline = @random.rand < multiline_chance ? true : false
       translator_comment = @random.rand < translator_comment_chance ? true : false
       extracted_comment = @random.rand < extracted_comment_chance ? true : false
