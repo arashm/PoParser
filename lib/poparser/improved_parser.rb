@@ -2,8 +2,10 @@ module PoParser
   class ImprovedParser < Parslet::Parser
     root(:document)
 
-    rule(:document) { comments.repeat >> entries.repeat }
+    rule(:document) { comment.repeat >> entry.repeat }
 
+    rule(:comment)  { str('#').present? >> comments }
+    rule(:entry)    { str('msg').present? >> entries }
     # Comments
     rule(:comments) do
       reference.as(:reference) |

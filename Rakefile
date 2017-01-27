@@ -96,6 +96,57 @@ namespace :benchmark do
     end
   end
 
+  desc "Benchmark only parslet speed of parsing test/benchmark.po 10 times with debug"
+  task 'parse_with_debug' do
+    require 'parslet/convenience'
+    $lookup_count = 0
+    $parsing_count = 0
+    $char_count = 0
+    Parslet::Atoms::Context.class_eval do
+      def lookup(obj, pos)
+        # p obj
+        $lookup_count += 1
+        @cache[pos][obj.object_id]
+      end
+    end
+
+    PoParser::Tokenizer.class_eval do
+      # monkey patch tokenizer so it only parses, no PO object generation
+      def initialize
+        @parser = PoParser::Parser.new
+      end
+
+      def extract_entries(path)
+        File.open(path, 'r').each_line("\n\n") do |block|
+          block.strip!
+          $char_count += block.length
+          parse_block(block)
+        end
+        true
+      end
+
+      private
+      def parse_block(block)
+        $parsing_count += 1
+        parsed_hash = @parser.parse_with_debug(block)
+      end
+    end
+
+    pofile = File.expand_path("test/benchmark.po", __dir__)
+    Benchmark.bmbm do |x|
+      x.report("debug:") {2.times { PoParser.parse(pofile) }}
+    end
+    lookups_per_parse = ($lookup_count / $parsing_count).to_f.round;
+    lookups_per_parse = lookups_per_parse.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    lookups_per_char = ($lookup_count / $char_count).to_f.round;
+    lookups_per_char = lookups_per_char.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    $char_count = $char_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{} chars"
+    puts "Thats #{lookups_per_parse} lookups per parse and #{lookups_per_char} lookups per char"
+  end
+
   desc "Benchmark file reading speed"
   task 'read_file' do
     PoParser::Tokenizer.class_eval do
@@ -167,12 +218,16 @@ namespace :benchmark do
     desc "Bench with debug"
     task 'parse_with_debug' do
       require 'parslet/convenience'
-      # Parslet::Atoms::Context.class_eval do
-      #   def lookup(obj, pos)
-      #     p obj
-      #     @cache[pos][obj.object_id]
-      #   end
-      # end
+      $lookup_count = 0
+      $parsing_count = 0
+      $char_count = 0
+      Parslet::Atoms::Context.class_eval do
+        def lookup(obj, pos)
+          # p obj
+          $lookup_count += 1
+          @cache[pos][obj.object_id]
+        end
+      end
 
       PoParser::Tokenizer.class_eval do
         # monkey patch tokenizer so it only parses, no PO object generation
@@ -182,13 +237,16 @@ namespace :benchmark do
 
         def extract_entries(path)
           File.open(path, 'r').each_line("\n\n") do |block|
-            parse_block(block.strip)
+            block.strip!
+            $char_count += block.length
+            parse_block(block)
           end
           true
         end
 
         private
         def parse_block(block)
+          $parsing_count += 1
           parsed_hash = @parser.parse_with_debug(block)
         end
       end
@@ -197,6 +255,15 @@ namespace :benchmark do
       Benchmark.bmbm do |x|
         x.report("debug:") {2.times { PoParser.parse(pofile) }}
       end
+      lookups_per_parse = ($lookup_count / $parsing_count).to_f.round;
+      lookups_per_parse = lookups_per_parse.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      lookups_per_char = ($lookup_count / $char_count).to_f.round;
+      lookups_per_char = lookups_per_char.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      $char_count = $char_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      puts "Number of lookups required: #{$lookup_count} in #{$parsing_count} parses with #{} chars"
+      puts "Thats #{lookups_per_parse} lookups per parse and #{lookups_per_char} lookups per char"
     end
 
 
