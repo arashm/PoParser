@@ -136,9 +136,9 @@ namespace :benchmark do
     Benchmark.bmbm do |x|
       x.report("debug:") {2.times { PoParser.parse(pofile) }}
     end
-    lookups_per_parse = ($lookup_count / $parsing_count).to_f.round;
+    lookups_per_parse = ($lookup_count / $parsing_count.to_f).to_f.round(1);
     lookups_per_parse = lookups_per_parse.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
-    lookups_per_char = ($lookup_count / $char_count).to_f.round;
+    lookups_per_char = ($lookup_count / $char_count.to_f).to_f.round(2);
     lookups_per_char = lookups_per_char.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
@@ -255,9 +255,9 @@ namespace :benchmark do
       Benchmark.bmbm do |x|
         x.report("debug:") {2.times { PoParser.parse(pofile) }}
       end
-      lookups_per_parse = ($lookup_count / $parsing_count).to_f.round;
+      lookups_per_parse = ($lookup_count / $parsing_count.to_f).to_f.round(1);
       lookups_per_parse = lookups_per_parse.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
-      lookups_per_char = ($lookup_count / $char_count).to_f.round;
+      lookups_per_char = ($lookup_count / $char_count.to_f).to_f.round(2);
       lookups_per_char = lookups_per_char.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
       $lookup_count = $lookup_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
       $parsing_count = $parsing_count.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
