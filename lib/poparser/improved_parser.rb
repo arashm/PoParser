@@ -31,8 +31,7 @@ module PoParser
     rule(:previous_msgid_plural)    { str('id_plural') >> space >> msg_text_line >> previous_multiline.repeat }
     rule(:cached)                   { str('~') >> space >> comment_text_line }
 
-    rule(:previous_multiline)       { previous_multiline_start.present? >> spaced('#|') >> msg_text_line.repeat.maybe }
-    rule(:previous_multiline_start) { str('#|') >> space >> str('"') }
+    rule(:previous_multiline)       { str('#| ') >> space >> msg_text_line }
 
     # Entries
     rule(:entries) do
@@ -48,25 +47,24 @@ module PoParser
     rule(:msgid_plural) { str('id_plural') >> space >> msg_text_line >> multiline.repeat }
 
     rule(:msgstr)       { str('str') >> space >> msg_text_line >> multiline.repeat }
-    rule(:msgstr_plural){ str('str') >> space >> bracketed(match["[0-9]"].as(:plural_id)) >> space? >> msg_text_line >> multiline.repeat }
+    rule(:msgstr_plural){ str('str') >> space >> bracketed(match["[0-9]"].as(:plural_id)) >> space >> msg_text_line >> multiline.repeat }
     rule(:msgctxt)      { str('ctxt') >> space >> msg_text_line >> multiline.repeat }
 
     # Helpers
     rule(:space)       { match['\p{Blank}'].repeat } #match only whitespace and not newline
-    rule(:space?)      { space.maybe }
     rule(:newline)     { match["\n"] }
     rule(:eol)         { newline | any.absent? }
     rule(:character)   { escaped | text }
     rule(:text)        { any }
     rule(:escaped)     { str('\\') >> any }
-    rule(:msg_line_end){ str('"') >> space? >> eol }
+    rule(:msg_line_end){ str('"') >> space >> eol }
 
     rule(:comment_text_line) do
-      (eol.absent? >> character).repeat.maybe.as(:text) >> eol
+      (eol.absent? >> character).repeat.as(:text) >> eol
     end
 
     rule(:msg_text_line) do
-      str('"') >> (msg_line_end.absent? >> character).repeat.maybe.as(:text) >> msg_line_end
+      str('"') >> (msg_line_end.absent? >> character).repeat.as(:text) >> msg_line_end
     end
 
     def bracketed(atom)
@@ -74,7 +72,7 @@ module PoParser
     end
 
     def spaced(character)
-      str(character) >> space?
+      str(character) >> space
     end
   end
 end
