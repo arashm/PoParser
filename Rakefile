@@ -128,7 +128,17 @@ namespace :benchmark do
       private
       def parse_block(block)
         $parsing_count += 1
-        parsed_hash = @parser.parse_with_debug(block)
+        # only print the first error
+        begin
+          parsed_hash = @parser.parse(block)
+        rescue Parslet::ParseFailed => error
+          puts "Message:"
+          puts block
+          puts "Error:"
+          puts error.cause.ascii_tree
+          exit
+        end
+        #parsed_hash = @parser.parse_with_debug(block)
       end
     end
 
@@ -178,6 +188,47 @@ namespace :benchmark do
     end
   end
 
+
+  desc "Profile parse"
+  task "profile_parse" do
+    PoParser::Tokenizer.class_eval do
+      # monkey patch tokenizer so it only parses, no PO object generation
+      def initialize
+        @parser = PoParser::Parser.new
+      end
+
+      def extract_entries(path)
+        block = ''
+        File.open(path, 'r') do |f|
+          f.each_line do |line|
+            if line.match(/^\n$/)
+              parse_block(block) if block != ''
+              block = ''
+            elsif f.eof?
+              block += line
+              parse_block(block)
+            else
+              block += line
+            end
+          end
+        end
+        true
+      end
+      private
+      def parse_block(block)
+        parsed_hash = @parser.parse(block)
+      end
+    end
+    require 'ruby-prof'
+    RubyProf.start
+    pofile = File.expand_path("test/benchmark.po", __dir__)
+    PoParser.parse(pofile)
+    result = RubyProf.stop
+
+    printer = RubyProf::FlatPrinter.new(result)
+    printer.print(STDOUT)
+  end
+
   namespace :improve do
     # override some benchmarks improving the monkey patched methods to compare
     desc "Benchmark only parslet speed of parsing test/benchmark.po 10 times"
@@ -214,7 +265,6 @@ namespace :benchmark do
       end
     end
 
-
     desc "Bench with debug"
     task 'parse_with_debug' do
       require 'parslet/convenience'
@@ -247,7 +297,18 @@ namespace :benchmark do
         private
         def parse_block(block)
           $parsing_count += 1
-          parsed_hash = @parser.parse_with_debug(block)
+
+          # only print the first error
+          begin
+            parsed_hash = @parser.parse(block)
+          rescue Parslet::ParseFailed => error
+            puts "Message:"
+            puts block
+            puts "Error:"
+            puts error.cause.ascii_tree
+            exit
+          end
+          # parsed_hash = @parser.parse_with_debug(block)
         end
       end
 
@@ -292,7 +353,20 @@ namespace :benchmark do
 
         private
         def parse_block(block)
-          parsed_hash = @parser.parse_with_debug(block)
+          # only print the first error
+          begin
+            parsed_hash = @parser.parse(block)
+            parsed_hash = PoParser::Transformer.new.transform(parsed_hash)
+            puts "Hash:"
+            puts parsed_hash
+          rescue Parslet::ParseFailed => error
+            puts "Message:"
+            puts block
+            puts "Error:"
+            puts error.cause.ascii_tree
+            exit
+          end
+          #parsed_hash = @parser.parse_with_debug(block)
         end
       end
 
@@ -376,6 +450,90 @@ namespace :benchmark do
       end
     end
 
+    desc "Profile parse"
+    task "profile_parse" do
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+          @parser = PoParser::ImprovedParser.new
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block.strip)
+          end
+          true
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = @parser.parse(block)
+        end
+      end
+
+      require 'ruby-prof'
+      RubyProf.start
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      PoParser.parse(pofile)
+      result = RubyProf.stop
+
+      printer = RubyProf::FlatPrinter.new(result)
+      printer.print(STDOUT)
+    end
+
   end # end of improve namespace
+
+  desc "case if/else send bench"
+  task "caseifsend" do
+    n = 5000000
+
+    def a(char)
+      char
+    end
+    def b(char)
+      char
+    end
+    def c(char)
+      char
+    end
+    def d(char)
+      char
+    end
+
+    Benchmark.bmbm do |x|
+      char = 'b'
+      x.report("case:") {n.times {
+        case char
+        when 'c'
+          c(char)
+        when 'b'
+          b(char)
+        when 'a'
+          a(char)
+        when 'd'
+          d(char)
+        else
+        end
+        }}
+        x.report("if/else:") {n.times {
+          if char == 'c'
+            c(char)
+          elsif char == 'b'
+            b(char)
+          elsif char == 'a'
+            a(char)
+          elsif char == 'd'
+            d(char)
+          else
+          end
+          }}
+        x.report("send:") {n.times {
+          self.send char.to_sym, char
+          }}
+
+    end
+
+
+  end
 
 end # end of benchmark namespace
