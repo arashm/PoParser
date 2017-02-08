@@ -18,6 +18,93 @@ task 'generate_random_pofile', :messages, :obsoletes do |t, args|
   )
 end
 
+namespace :debug do
+
+  desc "Raw output of small benchmark file"
+  task 'parse_raw' do
+    PoParser::Tokenizer.class_eval do
+      # monkey patch tokenizer so it only parses, no PO object generation
+      def initialize
+        @parser = PoParser::ImprovedParser.new
+      end
+
+      def extract_entries(path)
+        File.open(path, 'r').each_line("\n\n") do |block|
+          puts parse_block(block.strip)
+        end
+        true
+      end
+
+      private
+      def parse_block(block)
+        # only print the first error
+        begin
+          parsed_hash = @parser.parse(block)
+          parsed_hash = PoParser::Transformer.new.transform(parsed_hash)
+          puts "Hash:"
+          puts parsed_hash
+        rescue Parslet::ParseFailed => error
+          puts "Message:"
+          puts block
+          puts "Error:"
+          puts error.cause.ascii_tree
+          exit
+        end
+        #parsed_hash = @parser.parse_with_debug(block)
+      end
+    end
+
+    pofile = File.expand_path("test/benchmark_small.po", __dir__)
+    PoParser.parse(pofile)
+  end
+
+  desc "Debug small benchmark file"
+  task 'parse_small' do
+    require 'parslet/convenience'
+    Parslet::Atoms::Context.class_eval do
+      def lookup(obj, pos)
+        p obj
+        @cache[pos][obj.object_id]
+      end
+    end
+
+    PoParser::Tokenizer.class_eval do
+      # monkey patch tokenizer so it only parses, no PO object generation
+      def initialize
+        @parser = PoParser::ImprovedParser.new
+      end
+
+      def extract_entries(path)
+        File.open(path, 'r').each_line("\n\n") do |block|
+          puts parse_block(block.strip)
+        end
+        true
+      end
+
+      private
+      def parse_block(block)
+        # only print the first error
+        begin
+          parsed_hash = @parser.parse(block)
+          parsed_hash = PoParser::Transformer.new.transform(parsed_hash)
+          puts "Hash:"
+          puts parsed_hash
+        rescue Parslet::ParseFailed => error
+          puts "Message:"
+          puts block
+          puts "Error:"
+          puts error.cause.ascii_tree
+          exit
+        end
+        #parsed_hash = @parser.parse_with_debug(block)
+      end
+    end
+
+    pofile = File.expand_path("test/benchmark_small.po", __dir__)
+    PoParser.parse(pofile)
+  end
+end
+
 namespace :benchmark do
   require 'benchmark'
   require 'poparser'
@@ -426,7 +513,6 @@ namespace :benchmark do
       end
     end
 
-
     desc "Benchmark file reading speed"
     task 'read_file' do
       PoParser::Tokenizer.class_eval do
@@ -530,10 +616,105 @@ namespace :benchmark do
         x.report("send:") {n.times {
           self.send char.to_sym, char
           }}
+    end
+  end
+
+  desc "benchmark escaped performance of stringscanner"
+  task "strscan_escaped" do
+    string = File.read(File.expand_path("test/escape_string.txt", __dir__))
+    require 'strscan'
+    UNESCAPED_QUOTE_REGEX = /(?<!\\)(?:\\{2})*"/
+
+    ANYTHING_BUT_UNESCAPED_QUOTE = /((\\{2})|(\\")|[^"])*/
+    ANYTHING_BUT_3 = /(\\(\\|")|[^"])*/
+    ANYTHING_BUT_2 = /(((?<!\\)(?:\\{2})*\\")|[^"])*/
+
+
+    scanner = StringScanner.new(string)
+    puts scanner.scan_until(UNESCAPED_QUOTE_REGEX)
+    scanner = StringScanner.new(string)
+    puts scanner.scan(ANYTHING_BUT_UNESCAPED_QUOTE)
+    scanner = StringScanner.new(string)
+    puts scanner.scan(ANYTHING_BUT_2)
+    scanner = StringScanner.new(string)
+    puts scanner.scan(ANYTHING_BUT_3)
+    n = 100000
+    Benchmark.bmbm do |x|
+      x.report("until:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan_until(UNESCAPED_QUOTE_REGEX).chomp('"')
+          scanner.pos = scanner.pos - 1
+        }
+      }
+
+      x.report("scan:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan(ANYTHING_BUT_UNESCAPED_QUOTE)
+        }
+      }
+      x.report("scan2:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan(ANYTHING_BUT_2)
+        }
+      }
+      x.report("scan3:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan(ANYTHING_BUT_3)
+        }
+      }
+
+      x.report("bychar:"){
+        n.times {
+          scanner = StringScanner.new(string)
+          result = ""
+        while true
+          char = scanner.getch
+          if char == "\\"
+            result << '\\'
+            result << scanner.getch
+          elsif char == "\""
+            break
+          else
+            result << char
+          end
+        end
+        }
+
+      }
 
     end
 
+  end
 
+  desc "benchmark scan vs scan_until performance of stringscanner"
+  task "strscan_scan_vs_until" do
+    string = File.read(File.expand_path("test/escape_string.txt", __dir__))
+    require 'strscan'
+
+    scanner = StringScanner.new(string)
+    puts scanner.scan(/.*/)
+    scanner = StringScanner.new(string)
+    puts scanner.scan_until(/$/)
+    n = 1000000
+    Benchmark.bmbm do |x|
+      x.report("until:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan_until(/$/)
+        }
+      }
+
+      x.report("scan:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          result = scanner.scan(/.*/)
+        }
+      }
+    end
   end
 
 end # end of benchmark namespace
