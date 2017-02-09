@@ -700,18 +700,32 @@ namespace :benchmark do
     scanner = StringScanner.new(string)
     puts scanner.scan_until(/$/)
     n = 1000000
+    def scan(scanner)
+      scanner.scan(/.*/).rstrip
+    end
+    def scan!(scanner)
+      result = scanner.scan(/.*/)
+      result.rstrip!
+      result
+    end
     Benchmark.bmbm do |x|
       x.report("until:") {
         n.times {
           scanner = StringScanner.new(string)
-          result = scanner.scan_until(/$/)
+          result = scanner.scan_until(/\p{Blank}*$/)
         }
       }
 
       x.report("scan:") {
         n.times {
           scanner = StringScanner.new(string)
-          result = scanner.scan(/.*/)
+          scan(scanner)
+        }
+      }
+      x.report("scan!:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          scan!(scanner)
         }
       }
     end
