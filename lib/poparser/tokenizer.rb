@@ -9,18 +9,10 @@ module PoParser
     def extract_entries(path)
       @po.path = path
       block = ''
-      File.open(path, 'r') do |f|
-        f.each_line do |line|
-          if line.match(/^\n$/)
-            @po << parse_block(block) if block != ''
-            block = ''
-          elsif f.eof?
-            block += line
-            @po << parse_block(block)
-          else
-            block += line
-          end
-        end
+      File.open(path, 'r').each_line("\n\n") do |block|
+        block.strip!
+        puts block
+        @po << parse_block(block) if block != ''
       end
       @po
     end
