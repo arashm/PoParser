@@ -9,6 +9,7 @@ module PoParser
   # * rubys regex is by default in single-line mode, therefore scan will only match until
   #  the next newline is hit (unless multi-line mode is explicitly enabled)
   module FastParser
+    require_relative 'error'
     require 'strscan'
     extend self
 
@@ -19,8 +20,7 @@ module PoParser
     def parse(message)
       @result = {}
       @scanner = StringScanner.new(message.strip)
-      line
-
+      lines
       @result
     end
 
@@ -65,14 +65,14 @@ module PoParser
         add_result(:obsolete, comment_text)
       else
         @scanner.pos = @scanner.pos - 2
-        raise PoParserError "Unknown comment type '#{@scanner.peek(10)}'"
+        raise PoParserError, "Unknown comment type '#{@scanner.peek(10)}'"
       end
       lines
     end
 
     def check_msg_start
       start = @scanner.scan(/msg/)
-      raise PoParserError "Invalid message start. Starts with #{@scanner.peek(10)}" unless start
+      raise PoParserError, "Invalid message start. Starts with #{@scanner.peek(10)}" unless start
       start
     end
 
@@ -105,7 +105,7 @@ module PoParser
           msgstr
         end
       else
-        raise PoParserError "Message without msgid is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+        raise PoParserError, "Message without msgid is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       end
     end
 
@@ -136,7 +136,7 @@ module PoParser
         add_result(:msgstr, text)
         message_multiline(:msgstr) if text.empty?
       else
-       raise PoParserError "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+       raise PoParserError, "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       end
     end
 
@@ -146,15 +146,15 @@ module PoParser
       if msgstr_key
         # msgstr plurals must come in 0-based index in order
         msgstr_num = msgstr_key.match(/\d/)[0].to_i
-        raise PoParserError "Bad 'msgstr[index]' index." if msgstr_num != num
+        raise PoParserError, "Bad 'msgstr[index]' index." if msgstr_num != num
         text = message_line
         add_result(msgstr_key, text)
         message_multiline(msgstr_key) if text.empty?
         msgstr_plural(num+1)
       elsif num == 0 # and msgstr_key was false
-        raise PoParserError "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+        raise PoParserError, "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       else
-        raise PoParserError "End of message was expected, but line started unexpectedly with #{@scanner.peek(10)}" unless @scanner.eos?
+        raise PoParserError, "End of message was expected, but line started unexpectedly with #{@scanner.peek(10)}" unless @scanner.eos?
       end
     end
 
@@ -170,14 +170,14 @@ module PoParser
         elsif @scanner.scan(/ctxt/)
           key = :previous_msgctxt
         else
-          raise PoParserError "Previous comment type '#| msg#{@scanner.peek(10)}' unknown."
+          raise PoParserError, "Previous comment type '#| msg#{@scanner.peek(10)}' unknown."
         end
         skip_whitespace
         text = message_line
         add_result(key, text)
         previous_multiline(key) if text.empty?
       else
-        raise PoParserError "Previous comments must start with '#| msg'. '#| #{@scanner.peek(10)}' unknown."
+        raise PoParserError, "Previous comments must start with '#| msg'. '#| #{@scanner.peek(10)}' unknown."
       end
     end
 
@@ -207,12 +207,12 @@ module PoParser
     def message_line
       if @scanner.getch == '"'
         text = message_text
-        raise PoParserError "The message text '#{text}' must be finished with the double quote character '\"'." unless @scanner.getch == '"'
+        raise PoParserError, "The message text '#{text}' must be finished with the double quote character '\"'." unless @scanner.getch == '"'
         skip_whitespace
-        raise PoParserError "There should be only whitespace until the end of line after the double quote character of a message text." unless end_of_line
+        raise PoParserError, "There should be only whitespace until the end of line after the double quote character of a message text." unless end_of_line
         text
       else
-        raise PoParserError "A message text needs to start with the double quote character '\"'. This was supposed to be a message text but no double quote was found."
+        raise PoParserError, "A message text needs to start with the double quote character '\"'. This was supposed to be a message text but no double quote was found. #{@scanner.peek(20)}"
       end
     end
 
@@ -227,7 +227,7 @@ module PoParser
     def comment_text
       text = @scanner.scan(/.*/) # everything until newline
       text.rstrip! # benchmarked faster too rstrip the string in place even though adding 2 loc
-      raise PoParserError "Comment text should advance to next line or stop at eos" unless end_of_line
+      raise PoParserError, "Comment text should advance to next line or stop at eos" unless end_of_line
       text
     end
 
