@@ -34,45 +34,53 @@ module PoParser
     # message parsing is always started with checking for msgctxt as content is expected in
     # msgctxt -> msgid -> msgid_plural -> msgstr order
     def lines
-      if @scanner.scan(/#/)
-        comment
-      else
-        message_context
+      begin
+        if @scanner.scan(/#/)
+          comment
+        else
+          message_context
+        end
+      rescue PoParserError => pe
+        raise PoParserError, "Error in lines\n" + pe.message
       end
     end
 
     # match a comment line. called on lines starting with '#'.
     # Recalls line when the comment line was parsed
     def comment
-      case @scanner.getch
-      when ' '
-        skip_whitespace
-        add_result(:translator_comment, comment_text)
-      when '.'
-        skip_whitespace
-        add_result(:extracted_comment, comment_text)
-      when ':'
-        skip_whitespace
-        add_result(:reference, comment_text)
-      when ','
-        skip_whitespace
-        add_result(:flag, comment_text)
-      when '|'
-        skip_whitespace
-        previous_comments
-      when '~'
-        skip_whitespace
-        add_result(:obsolete, comment_text)
-      else
-        @scanner.pos = @scanner.pos - 2
-        raise PoParserError, "Unknown comment type '#{@scanner.peek(10)}'"
+      begin
+        case @scanner.getch
+        when ' '
+          skip_whitespace
+          add_result(:translator_comment, comment_text)
+        when '.'
+          skip_whitespace
+          add_result(:extracted_comment, comment_text)
+        when ':'
+          skip_whitespace
+          add_result(:reference, comment_text)
+        when ','
+          skip_whitespace
+          add_result(:flag, comment_text)
+        when '|'
+          skip_whitespace
+          previous_comments
+        when '~'
+          skip_whitespace
+          add_result(:obsolete, comment_text)
+        else
+          @scanner.pos = @scanner.pos - 2
+          raise PoSyntaxError, "Unknown comment type '#{@scanner.peek(10)}'"
+        end
+      rescue PoParserError => pe
+        raise PoParserError, "Error in comment\n" + pe.message
       end
       lines
     end
 
     def check_msg_start
       start = @scanner.scan(/msg/)
-      raise PoParserError, "Invalid message start. Starts with #{@scanner.peek(10)}" unless start
+      raise PoSyntaxError, "Invalid message start. Starts with #{@scanner.peek(10)}" unless start
       start
     end
 
@@ -105,7 +113,7 @@ module PoParser
           msgstr
         end
       else
-        raise PoParserError, "Message without msgid is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+        raise PoSyntaxError, "Message without msgid is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       end
     end
 
@@ -136,7 +144,7 @@ module PoParser
         add_result(:msgstr, text)
         message_multiline(:msgstr) if text.empty?
       else
-       raise PoParserError, "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+       raise PoSyntaxError, "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       end
     end
 
@@ -146,15 +154,15 @@ module PoParser
       if msgstr_key
         # msgstr plurals must come in 0-based index in order
         msgstr_num = msgstr_key.match(/\d/)[0].to_i
-        raise PoParserError, "Bad 'msgstr[index]' index." if msgstr_num != num
+        raise PoSyntaxError, "Bad 'msgstr[index]' index." if msgstr_num != num
         text = message_line
         add_result(msgstr_key, text)
         message_multiline(msgstr_key) if text.empty?
         msgstr_plural(num+1)
       elsif num == 0 # and msgstr_key was false
-        raise PoParserError, "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
+        raise PoSyntaxError, "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(10)}."
       else
-        raise PoParserError, "End of message was expected, but line started unexpectedly with #{@scanner.peek(10)}" unless @scanner.eos?
+        raise PoSyntaxError, "End of message was expected, but line started unexpectedly with #{@scanner.peek(10)}" unless @scanner.eos?
       end
     end
 
@@ -170,14 +178,14 @@ module PoParser
         elsif @scanner.scan(/ctxt/)
           key = :previous_msgctxt
         else
-          raise PoParserError, "Previous comment type '#| msg#{@scanner.peek(10)}' unknown."
+          raise PoSyntaxError, "Previous comment type '#| msg#{@scanner.peek(10)}' unknown."
         end
         skip_whitespace
         text = message_line
         add_result(key, text)
         previous_multiline(key) if text.empty?
       else
-        raise PoParserError, "Previous comments must start with '#| msg'. '#| #{@scanner.peek(10)}' unknown."
+        raise PoSyntaxError, "Previous comments must start with '#| msg'. '#| #{@scanner.peek(10)}' unknown."
       end
     end
 
@@ -207,12 +215,21 @@ module PoParser
     def message_line
       if @scanner.getch == '"'
         text = message_text
-        raise PoParserError, "The message text '#{text}' must be finished with the double quote character '\"'." unless @scanner.getch == '"'
+        unless @scanner.getch == '"'
+          err_msg = "The message text '#{text}' must be finished with the double quote character '\"'."
+          raise PoSyntaxError, err_msg
+        end
         skip_whitespace
-        raise PoParserError, "There should be only whitespace until the end of line after the double quote character of a message text." unless end_of_line
+        unless end_of_line
+          err_msg = "There should be only whitespace until the end of line"
+          err_msg += "after the double quote character of a message text."
+          raise PoSyntaxError, err_msg
+        end
         text
       else
-        raise PoParserError, "A message text needs to start with the double quote character '\"'. This was supposed to be a message text but no double quote was found. #{@scanner.peek(20)}"
+        err_msg = "A message text needs to start with the double quote character '\"'. This "
+        err_msg += "was to be a message text but no double quote was found. #{@scanner.peek(20)}"
+        raise PoSyntaxError, err_msg
       end
     end
 
@@ -227,7 +244,7 @@ module PoParser
     def comment_text
       text = @scanner.scan(/.*/) # everything until newline
       text.rstrip! # benchmarked faster too rstrip the string in place even though adding 2 loc
-      raise PoParserError, "Comment text should advance to next line or stop at eos" unless end_of_line
+      raise PoSyntaxError, "Comment text should advance to next line or stop at eos" unless end_of_line
       text
     end
 

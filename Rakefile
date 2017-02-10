@@ -731,4 +731,60 @@ namespace :benchmark do
     end
   end
 
+  desc "benchmark scan with and without rescue block"
+  task "strscan_scan_rescue_block" do
+    string = File.read(File.expand_path("test/escape_string.txt", __dir__))
+    require 'strscan'
+
+    scanner = StringScanner.new(string)
+    puts scanner.scan(/.*/)
+    scanner = StringScanner.new(string)
+    puts scanner.scan_until(/$/)
+    n = 1000000
+    def scan(scanner)
+      scanner.scan(/.*/).rstrip
+    end
+    def rescue_scan(scanner)
+      begin
+        scanner.scan(/.*/).rstrip
+      rescue PoParserError => pe
+        raise PoParserError
+      end
+    end
+
+    Benchmark.bmbm do |x|
+      x.report("scan:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          scan(scanner)
+        }
+      }
+      x.report("rescue:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          rescue_scan(scanner)
+        }
+      }
+    end
+    n = 10000000
+    Benchmark.bmbm do |x|
+      x.report("rand w/o rescue:") {
+        r = Random.new(1)
+        n.times {
+          r.rand(1000) * r.rand(1000)
+        }
+      }
+      x.report("rand w rescue:") {
+        r = Random.new(1)
+        n.times {
+          begin
+            r.rand(1000) * r.rand(1000)
+          rescue StandardError => e
+            raise StandardError
+          end
+        }
+      }
+    end
+  end
+
 end # end of benchmark namespace
