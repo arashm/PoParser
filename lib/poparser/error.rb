@@ -3,5 +3,11 @@ module PoParser
 	end
 
 	class PoSyntaxError < PoParserError
+		@msg = ""
+		def initialize(msg="Invalid po syntax")
+			@msg = msg
+			super(msg)
+		end
+
 	end
 end

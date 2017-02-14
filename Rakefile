@@ -786,5 +786,30 @@ namespace :benchmark do
       }
     end
   end
-
 end # end of benchmark namespace
+
+namespace :fastparser do
+    desc "Test fast parser with single complex entry"
+    task "test" do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+
+      puts PoParser::FastParser.parse(File.read(File.expand_path("test/complex_entry.po", __dir__)))
+    end
+
+    desc "Print output of old parser and new parser for comparison"
+    task "compare output" do
+
+      entry = File.read(File.expand_path("test/complex_entry.po", __dir__))
+
+      puts "Old parser:"
+      raw = PoParser::Parser.new.parse(entry.strip)
+      puts PoParser::Transformer.new.transform(raw)
+
+      puts "Fast parser:"
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+
+      puts PoParser::FastParser.parse()
+    end
+end
