@@ -7,7 +7,7 @@ module PoParser
     :previous_msgctxt => '#| msgctxt',
     :previous_msgid => '#| msgid',
     :previous_msgid_plural => '#| msgid_plural',
-    :cached => '#~'
+    :obsolete => '#~'
   }
 
   ENTRIES_LABELS = {

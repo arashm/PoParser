@@ -15,7 +15,7 @@ module PoParser
       extracted_comment.as(:extracted_comment) |
       flag.as(:flag) |
       previous |
-      cached.as(:cached) |
+      obsolete.as(:obsolete) |
       translator_comment.as(:translator_comment)
     end
 
@@ -32,7 +32,7 @@ module PoParser
     rule(:previous_msgctxt)         { spaced('ctxt') >> msg_text_line >> previous_multiline.repeat }
     rule(:previous_msgid)           { spaced('id') >> msg_text_line >> previous_multiline.repeat }
     rule(:previous_msgid_plural)    { spaced('id_plural') >> msg_text_line >> previous_multiline.repeat }
-    rule(:cached)                   { spaced('~') >> comment_text_line }
+    rule(:obsolete)                   { spaced('~') >> comment_text_line }
 
     rule(:previous_multiline)       { spaced('#|') >> msg_text_line }
 

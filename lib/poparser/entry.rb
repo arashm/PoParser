@@ -18,27 +18,27 @@ module PoParser
       define_reader_methods
 
       self.class.send(:alias_method, :translate, :msgstr=)
-      self.class.send(:alias_method, :obsolete, :cached)
-      self.class.send(:alias_method, :obsolete=, :cached=)
+      self.class.send(:alias_method, :cached, :obsolete)
+      self.class.send(:alias_method, :cached=, :obsolete=)
       # alias for backward compatibility of this typo
       self.class.send(:alias_method, :refrence, :reference)
       self.class.send(:alias_method, :refrence=, :reference)
     end
 
-    # If entry doesn't have any msgid, it's probably a cached entry that is
+    # If entry doesn't have any msgid, it's probably a obsolete entry that is
     # kept by the program for later use. These entries will usually start with: #~
     #
     # @return [Boolean]
-    def cached?
-      !@cached.nil?
+    def obsolete?
+      !@obsolete.nil?
     end
-    alias_method :obsolete?, :cached?
+    alias_method :obsolete?, :obsolete?
 
     # Checks if the entry is untraslated
     #
     # @return [Boolean]
     def untranslated?
-      return false if cached? || fuzzy?
+      return false if obsolete? || fuzzy?
       if @msgstr.is_a? Array
         return @msgstr.map {|ms| ms.str}.join.empty?
       end
@@ -50,7 +50,7 @@ module PoParser
     #
     # @return [Boolean]
     def translated?
-      return false if cached? || fuzzy?
+      return false if obsolete? || fuzzy?
       not untranslated?
     end
     alias_method :complete? , :translated?
@@ -66,7 +66,7 @@ module PoParser
     #
     # @return [Boolean]
     def fuzzy?
-      return false if cached?
+      return false if obsolete?
       @flag.to_s.match('fuzzy') ? true : false
     end
 

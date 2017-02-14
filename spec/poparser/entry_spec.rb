@@ -107,16 +107,16 @@ describe PoParser::Entry do
     end
   end
 
-  context 'Cached' do
+  context 'obsolete' do
     before do
       @entry = PoParser::Entry.new
-      @entry.cached = '#~ msgid "a cached entry"'
+      @entry.obsolete = '#~ msgid "a obsolete entry"'
       @entry.flag = 'Fuzzy'
     end
 
-    it 'checks for chached entries' do
-      expect(@entry.cached?).to be_truthy
+    it 'checks for obsolete entries' do
       expect(@entry.obsolete?).to be_truthy
+      expect(@entry.cached?).to be_truthy
     end
 
     it 'shouldn be counted as untranslated' do

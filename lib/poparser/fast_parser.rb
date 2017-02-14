@@ -87,7 +87,7 @@ module PoParser
             raise PoSyntaxError, "Previous comment entries need to be marked obsolete too in obsolete message entries. But already got: #{@result}"
           end
           skip_whitespace
-          add_result(:cached, comment_text)
+          add_result(:obsolete, comment_text)
           obsoletes
         else
           @scanner.pos = @scanner.pos - 2
@@ -293,7 +293,7 @@ module PoParser
     def obsoletes
       if @scanner.scan(/#~/)
         skip_whitespace
-        add_result(:cached, comment_text)
+        add_result(:obsolete, comment_text)
         obsoletes
       else
         raise PoSyntaxError, "All lines must be obsolete after the first obsolete line, but got #{@scanner.peek(10).inspect}." unless @scanner.eos?

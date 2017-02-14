@@ -13,7 +13,7 @@ module PoParser
       previous_msgctxt.as(:previous_msgctxt) |
       previous_msgid.as(:previous_msgid) |
       previous_msgid_plural.as(:previous_msgid_plural) |
-      cached.as(:cached) |
+      obsolete.as(:obsolete) |
       translator_comment.as(:translator_comment)
     end
 
@@ -24,7 +24,7 @@ module PoParser
     rule(:previous_msgctxt)         { spaced('#| msgctxt') >> msg_text_line >> previous_multiline.repeat }
     rule(:previous_msgid)           { spaced('#| msgid') >> msg_text_line >> previous_multiline.repeat }
     rule(:previous_msgid_plural)    { spaced('#| msgid_plural') >> msg_text_line >> previous_multiline.repeat }
-    rule(:cached)                   { spaced('#~') >> comment_text_line }
+    rule(:obsolete)                 { spaced('#~') >> comment_text_line }
 
     rule(:previous_multiline)       { previous_multiline_start.present? >> spaced('#|') >> msg_text_line.repeat.maybe }
     rule(:previous_multiline_start) { spaced('#|') >> str('"') }

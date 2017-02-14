@@ -1004,7 +1004,7 @@ namespace :fastparser do
     task "compare_benchmark" do
       include Benchmark
       pofile = File.expand_path("test/benchmark.po", __dir__)
-      Benchmark.benchmark(CAPTION, 10, FORMAT, "default sum:" , "improved sum:") do |x|
+      Benchmark.benchmark(CAPTION, 14, FORMAT, "default total:" , "fast total:") do |x|
         PoParser::Tokenizer.class_eval do
           def initialize
             @parser = PoParser::Parser.new
@@ -1021,7 +1021,7 @@ namespace :fastparser do
             parsed_hash = @parser.parse(block)
           end
         end
-        d1 = x.report("default1:") {10.times { PoParser.parse(pofile) }}
+        d1 = x.report("default1:") {100.times { PoParser.parse(pofile) }}
         PoParser::Tokenizer.class_eval do
           def initialize
 
@@ -1039,7 +1039,7 @@ namespace :fastparser do
             parsed_hash = PoParser::FastParser.parse(block)
           end
         end
-        i1 = x.report("fast1:") {10.times { PoParser.parse(pofile) }}
+        i1 = x.report("fast1:") {100.times { PoParser.parse(pofile) }}
         PoParser::Tokenizer.class_eval do
           def initialize
             @parser = PoParser::Parser.new
@@ -1056,7 +1056,7 @@ namespace :fastparser do
             parsed_hash = @parser.parse(block)
           end
         end
-        d2 = x.report("default2:") {10.times { PoParser.parse(pofile) }}
+        d2 = x.report("default2:") {100.times { PoParser.parse(pofile) }}
         PoParser::Tokenizer.class_eval do
           def initialize
 
@@ -1074,7 +1074,7 @@ namespace :fastparser do
             parsed_hash = PoParser::FastParser.parse(block)
           end
         end
-        i2= x.report("fast2:") {10.times { PoParser.parse(pofile) }}
+        i2= x.report("fast2:") {100.times { PoParser.parse(pofile) }}
         [d1+d2, i1+i2]
       end
     end
