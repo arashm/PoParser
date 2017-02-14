@@ -19,7 +19,6 @@ task 'generate_random_pofile', :messages, :obsoletes do |t, args|
 end
 
 namespace :debug do
-
   desc "Raw output of small benchmark file"
   task 'parse_raw' do
     PoParser::Tokenizer.class_eval do
@@ -317,6 +316,7 @@ namespace :benchmark do
   end
 
   namespace :improve do
+    require_relative 'lib/poparser/improved_parser'
     # override some benchmarks improving the monkey patched methods to compare
     desc "Benchmark only parslet speed of parsing test/benchmark.po 10 times"
     task 'parse' do
@@ -619,6 +619,42 @@ namespace :benchmark do
     end
   end
 
+  desc "benchmark scan vs getch performance"
+  task "strscan_scan_vs_getch" do
+    string = '""'
+    require 'strscan'
+
+    n = 100000
+    Benchmark.bmbm do |x|
+
+      x.report("scan:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          loop do
+            if scanner.scan(/"/)
+              result = "yolo"
+            else
+              scanner.pos = scanner.pos + 1
+            end
+            break if scanner.eos?
+          end
+        }
+      }
+      x.report("getch:") {
+        n.times {
+          scanner = StringScanner.new(string)
+          loop do
+            if scanner.getch == ""
+              result = "yolo"
+            end
+            break if scanner.eos?
+          end
+        }
+      }
+
+    end
+  end
+
   desc "benchmark escaped performance of stringscanner"
   task "strscan_escaped" do
     string = File.read(File.expand_path("test/escape_string.txt", __dir__))
@@ -683,7 +719,6 @@ namespace :benchmark do
           end
         end
         }
-
       }
 
     end
@@ -794,11 +829,29 @@ namespace :fastparser do
       require_relative 'lib/poparser/error'
       require_relative 'lib/poparser/fast_parser'
 
+      puts "test/complex_entry.po output:"
       puts PoParser::FastParser.parse(File.read(File.expand_path("test/complex_entry.po", __dir__)))
+
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+          @po = PoParser::Po.new
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = PoParser::FastParser.parse(block)
+        end
+      end
+
+      po = PoParser.parse(File.expand_path("test/benchmark_small.po",__dir__))
+      puts po.inspect
     end
 
     desc "Print output of old parser and new parser for comparison"
-    task "compare output" do
+    task "compare_output" do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
 
       entry = File.read(File.expand_path("test/complex_entry.po", __dir__))
 
@@ -809,7 +862,186 @@ namespace :fastparser do
       puts "Fast parser:"
       require_relative 'lib/poparser/error'
       require_relative 'lib/poparser/fast_parser'
+      entry = File.read(File.expand_path("test/complex_entry.po", __dir__))
+      puts PoParser::FastParser.parse(entry)
+    end
 
-      puts PoParser::FastParser.parse()
+    desc "Profile fastparser"
+    task "profile" do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block.strip)
+          end
+          true
+        end
+
+        private
+        def parse_block(block)
+          parsed_hash = PoParser::FastParser.parse(block)
+        end
+      end
+
+      require 'ruby-prof'
+      RubyProf.start
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      PoParser.parse(pofile)
+      result = RubyProf.stop
+
+      printer = RubyProf::FlatPrinter.new(result)
+      printer.print(STDOUT)
+    end
+
+    desc "Benchmark only parsing speed of parsing test/benchmark.po 10 times"
+    task 'benchmark_parse' do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block)
+          end
+          true
+        end
+        private
+        def parse_block(block)
+          parsed_hash = PoParser::FastParser.parse(block)
+        end
+      end
+
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      Benchmark.bmbm do |x|
+        x.report("parse:") {10.times {PoParser.parse(pofile)}}
+      end
+    end
+
+
+    desc "Benchmark"
+    task "benchmark" do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+      PoParser::Tokenizer.class_eval do
+        # monkey patch tokenizer so it only parses, no PO object generation
+        def initialize
+        end
+
+        def extract_entries(path)
+          File.open(path, 'r').each_line("\n\n") do |block|
+            parse_block(block)
+          end
+          true
+        end
+        private
+        def parse_block(block)
+          parsed_hash = PoParser::FastParser.parse(block)
+        end
+      end
+      include Benchmark
+      require_relative 'spec/utils/random_pofile_generator'
+      pofile = File.expand_path("test/benchmark.po.tmp", __dir__)
+      Benchmark.benchmark(CAPTION, 6, FORMAT, "total:") do |x|
+        total = nil
+        total_length = 0
+        for i in 0..5 do
+          length = (Random.new.rand * 400.0 + 100).to_i
+          total_length += length
+          puts "Benchmarking file of length #{length}"
+          PoParser::RandomPoFileGenerator.generate_file(pofile, length)
+          t = x.report("try#{i}:") {PoParser.parse(pofile)}
+          File.unlink(pofile)
+          total = total ? total+t : t
+        end
+        puts "Total message length #{total_length}"
+        [total]
+      end
+    end
+
+    desc "compare new parser to old parser in benchmark"
+    task "compare_benchmark" do
+      include Benchmark
+      pofile = File.expand_path("test/benchmark.po", __dir__)
+      Benchmark.benchmark(CAPTION, 10, FORMAT, "default sum:" , "improved sum:") do |x|
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::Parser.new
+          end
+          def extract_entries(path)
+            File.open(path, 'r').each_line("\n\n") do |block|
+              parse_block(block.strip)
+            end
+            true
+          end
+
+          private
+          def parse_block(block)
+            parsed_hash = @parser.parse(block)
+          end
+        end
+        d1 = x.report("default1:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+
+          end
+
+          def extract_entries(path)
+            File.open(path, 'r').each_line("\n\n") do |block|
+              parse_block(block)
+            end
+            true
+          end
+
+          private
+          def parse_block(block)
+            parsed_hash = PoParser::FastParser.parse(block)
+          end
+        end
+        i1 = x.report("fast1:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+            @parser = PoParser::Parser.new
+          end
+          def extract_entries(path)
+            File.open(path, 'r').each_line("\n\n") do |block|
+              parse_block(block.strip)
+            end
+            true
+          end
+
+          private
+          def parse_block(block)
+            parsed_hash = @parser.parse(block)
+          end
+        end
+        d2 = x.report("default2:") {10.times { PoParser.parse(pofile) }}
+        PoParser::Tokenizer.class_eval do
+          def initialize
+
+          end
+
+          def extract_entries(path)
+            File.open(path, 'r').each_line("\n\n") do |block|
+              parse_block(block)
+            end
+            true
+          end
+
+          private
+          def parse_block(block)
+            parsed_hash = PoParser::FastParser.parse(block)
+          end
+        end
+        i2= x.report("fast2:") {10.times { PoParser.parse(pofile) }}
+        [d1+d2, i1+i2]
+      end
     end
 end

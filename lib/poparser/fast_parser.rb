@@ -46,7 +46,7 @@ module PoParser
         if @scanner.scan(/#/)
           comment
         else
-          message_context
+          msgctxt
         end
       rescue PoSyntaxError => pe
         # throw a normal PoParserError to break the recursion
@@ -62,29 +62,40 @@ module PoParser
         when ' '
           skip_whitespace
           add_result(:translator_comment, comment_text)
+          lines
         when '.'
           skip_whitespace
           add_result(:extracted_comment, comment_text)
+          lines
         when ':'
           skip_whitespace
           add_result(:reference, comment_text)
+          lines
         when ','
           skip_whitespace
           add_result(:flag, comment_text)
+          lines
         when '|'
           skip_whitespace
           previous_comments
+          lines
+        when "\n"
+          add_result(:translator_comment, "") # empty comment line
+          lines
         when '~'
+          if @result[:previous_msgctxt] || @result[:previous_msgid] || @result[:previous_msgid_plural]
+            raise PoSyntaxError, "Previous comment entries need to be marked obsolete too in obsolete message entries. But already got: #{@result}"
+          end
           skip_whitespace
-          add_result(:obsolete, comment_text)
+          add_result(:cached, comment_text)
+          obsoletes
         else
           @scanner.pos = @scanner.pos - 2
-          raise PoSyntaxError, "Unknown comment type '#{@scanner.peek(15)}'"
+          raise PoSyntaxError, "Unknown comment type #{@scanner.peek(10).inspect}"
         end
       rescue PoSyntaxError => pe
         raise PoSyntaxError, "Syntax error in comment\n" + pe.message, pe.backtrace
       end
-      lines
     end
 
     # matches the msgctxt line and will continue to check for msgid afterwards
@@ -122,7 +133,7 @@ module PoParser
           end
         else
           err_msg = "Message without msgid is not allowed."
-          err_msg += "The Line started unexpectedly with #{@scanner.peek(15)}."
+          err_msg += "The Line started unexpectedly with #{@scanner.peek(10).inspect}."
           raise PoSyntaxError, err_msg
         end
       rescue PoSyntaxError => pe
@@ -162,8 +173,10 @@ module PoParser
           text = message_line
           add_result(:msgstr, text)
           message_multiline(:msgstr) if text.empty?
+          skip_whitespace
+          raise PoSyntaxError, "Unexpected content after expected message end #{@scanner.peek(10).inspect}" unless @scanner.eos?
         else
-         raise PoSyntaxError, "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(15)}."
+         raise PoSyntaxError, "Singular message without msgstr is not allowed. Line started unexpectedly with #{@scanner.peek(10).inspect}."
         end
       rescue PoSyntaxError => pe
         raise PoSyntaxError, "Syntax error in msgstr\n" + pe.message, pe.backtrace
@@ -178,14 +191,15 @@ module PoParser
           # msgstr plurals must come in 0-based index in order
           msgstr_num = msgstr_key.match(/\d/)[0].to_i
           raise PoSyntaxError, "Bad 'msgstr[index]' index." if msgstr_num != num
+          skip_whitespace
           text = message_line
           add_result(msgstr_key, text)
           message_multiline(msgstr_key) if text.empty?
           msgstr_plural(num+1)
         elsif num == 0 # and msgstr_key was false
-          raise PoSyntaxError, "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(15)}."
+          raise PoSyntaxError, "Plural message without msgstr[0] is not allowed. Line started unexpectedly with #{@scanner.peek(10).inspect}."
         else
-          raise PoSyntaxError, "End of message was expected, but line started unexpectedly with #{@scanner.peek(15)}" unless @scanner.eos?
+          raise PoSyntaxError, "End of message was expected, but line started unexpectedly with #{@scanner.peek(10).inspect}" unless @scanner.eos?
         end
       rescue PoSyntaxError => pe
         raise PoSyntaxError, "Syntax error in msgstr_plural\n" + pe.message, pe.backtrace
@@ -205,14 +219,14 @@ module PoParser
           elsif @scanner.scan(/ctxt/)
             key = :previous_msgctxt
           else
-            raise PoSyntaxError, "Previous comment type '#| msg#{@scanner.peek(15)}' unknown."
+            raise PoSyntaxError, "Previous comment type #{("msg" + @scanner.peek(10)).inspect} unknown."
           end
           skip_whitespace
           text = message_line
           add_result(key, text)
           previous_multiline(key) if text.empty?
         else
-          raise PoSyntaxError, "Previous comments must start with '#| msg'. '#| #{@scanner.peek(15)}' unknown."
+          raise PoSyntaxError, "Previous comments must start with '#| msg'. #{@scanner.peek(10).inspect} unknown."
         end
       rescue PoSyntaxError => pe
         raise PoSyntaxError, "Syntax error in previous_comments\n" + pe.message, pe.backtrace
@@ -222,12 +236,12 @@ module PoParser
     def previous_multiline(key)
       begin
         # scan multilines until no further multiline is hit
-        # /#|\p{Blank}"/ needs to catch the double quote to ensure it hits a previous
+        # /#\|\p{Blank}"/ needs to catch the double quote to ensure it hits a previous
         # multiline and not another line type.
-        if @scanner.scan(/#|\p{Blank}*"/)
+        if @scanner.scan(/#\|\p{Blank}*"/)
           @scanner.pos = @scanner.pos - 1 # go one character back, so we can reuse the "message line" method
           add_result(key, message_line)
-          previous_miltiline(key) # go on until we no longer hit a multiline line
+          previous_multiline(key) # go on until we no longer hit a multiline line
         end
       rescue PoSyntaxError => pe
         raise PoSyntaxError, "Syntax error in previous_multiline\n" + pe.message, pe.backtrace
@@ -245,7 +259,6 @@ module PoParser
         raise PoSyntaxError, "Syntax error in message_multiline with key '#{key}'\n" + pe.message, pe.backtrace
       end
     end
-
 
     # identifies a message line and returns it's text or raises an error
     #
@@ -266,8 +279,9 @@ module PoParser
           end
           text
         else
+          @scanner.pos = @scanner.pos - 1
           err_msg = "A message text needs to start with the double quote character '\"',"
-          err_msg += " but this was found: '#{@scanner.peek(15)}'"
+          err_msg += " but this was found: #{@scanner.peek(10).inspect}"
           raise PoSyntaxError, err_msg
         end
       rescue PoSyntaxError => pe
@@ -275,6 +289,16 @@ module PoParser
       end
     end
 
+    # used to parse all obsolete lines. An obsolete message may only contain obsolete entries
+    def obsoletes
+      if @scanner.scan(/#~/)
+        skip_whitespace
+        add_result(:cached, comment_text)
+        obsoletes
+      else
+        raise PoSyntaxError, "All lines must be obsolete after the first obsolete line, but got #{@scanner.peek(10).inspect}." unless @scanner.eos?
+      end
+    end
 
     #########################################
     ###             scanning              ###

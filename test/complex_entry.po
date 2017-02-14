@@ -1,4 +1,5 @@
 # translator-comment
+#
 #. extract
 #: reference1
 #: reference2
