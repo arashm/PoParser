@@ -11,7 +11,6 @@ module PoParser
       block = ''
       File.open(path, 'r').each_line("\n\n") do |block|
         block.strip!
-        puts block
         @po << parse_block(block) if block != ''
       end
       @po
