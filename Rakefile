@@ -866,6 +866,40 @@ namespace :fastparser do
       puts PoParser::FastParser.parse(entry)
     end
 
+    desc "Compare new and old parser result on test/benchmark.po"
+    task "compare" do
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+      file = File.expand_path("test/benchmark.po", __dir__)
+
+      puts "Old parser:"
+      old_po = PoParser.parse(file)
+
+      PoParser::Tokenizer.class_eval do
+        def extract_entries(path)
+          @po.path = path
+          block = ''
+          File.open(path, 'r').each_line("\n\n") do |block|
+            @po << parse_block(block) if block != ''
+          end
+          @po
+        end
+        private
+        def parse_block(block)
+          parsed_hash = PoParser::FastParser.parse(block)
+        end
+      end
+
+      puts "Fast parser:"
+      require_relative 'lib/poparser/error'
+      require_relative 'lib/poparser/fast_parser'
+      new_po = PoParser.parse(file)
+
+
+      puts "Equal output?: #{old_po.to_s === new_po.to_s}"
+
+    end
+
     desc "Profile fastparser"
     task "profile" do
       require_relative 'lib/poparser/error'
