@@ -1,13 +1,8 @@
 # External Libs
-require 'parslet'
+require 'simple_po_parser'
 
 # Local files
 require 'poparser/constants'
-require 'poparser/parser'
-require 'poparser/fast_parser'
-require 'poparser/improved_parser'
-require 'poparser/error'
-require 'poparser/transformer'
 require 'poparser/tokenizer'
 require 'poparser/comment'
 require 'poparser/message'

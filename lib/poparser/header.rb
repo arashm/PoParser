@@ -70,6 +70,26 @@ module PoParser
       string.join("\n")
     end
 
+    def inspect
+      string = []
+      if @comments.is_a?(Array)
+        @comments.each do |comment|
+          string << "# #{comment}".strip
+        end
+      else
+        string << "# #{@comments}".strip
+      end
+      string << "#, #{@flag.to_s}" if @flag
+      string << "msgid \"\"\nmsgstr \"\""
+      configs.each do |k, v|
+        if v.nil? || v.empty?
+          next
+        end
+        string << "#{k}: #{v}\n".dump
+      end
+      string.join("\n")
+    end
+
   private
     def convert_msgstr_to_hash(msgstr)
       options_array = msgstr.value.map do |options|
