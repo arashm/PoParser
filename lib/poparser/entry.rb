@@ -22,7 +22,7 @@ module PoParser
       self.class.send(:alias_method, :cached=, :obsolete=)
       # alias for backward compatibility of this typo
       self.class.send(:alias_method, :refrence, :reference)
-      self.class.send(:alias_method, :refrence=, :reference)
+      self.class.send(:alias_method, :refrence=, :reference=)
     end
 
     # If entry doesn't have any msgid, it's probably a obsolete entry that is
@@ -32,7 +32,7 @@ module PoParser
     def obsolete?
       !@obsolete.nil?
     end
-    alias_method :obsolete?, :obsolete?
+    alias_method :cached?, :obsolete?
 
     # Checks if the entry is untraslated
     #
