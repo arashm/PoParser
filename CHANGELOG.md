@@ -1,3 +1,6 @@
+3.0.0 / 2017-03-03
+==================
+  * replaced parslet with simple_po_parser. Speedup parsing by up to 500x
 
 2.0.1 / 2016-12-29
 ==================
