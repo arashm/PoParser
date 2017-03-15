@@ -99,9 +99,9 @@ describe PoParser::Entry do
     end
 
     it 'convert multiline entries to string' do
-      @entry.previous_msgid = ['first line', 'second line']
-      result = "first linesecond line"
-      result_with_label = "#| msgid \"\"\n#| \"first line\"\n#| \"second line\"\n"
+      @entry.previous_msgid = ['first line\n', 'second line']
+      result = "first line\\nsecond line"
+      result_with_label = "#| msgid \"\"\n#| \"first line\\n\"\n#| \"second line\"\n"
       expect(@entry.previous_msgid.to_s).to eq result
       expect(@entry.previous_msgid.to_s(true)).to eq result_with_label
     end

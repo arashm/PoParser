@@ -34,7 +34,15 @@ module PoParser
     end
 
     def to_str
-      @value.is_a?(Array) ? @value.join : @value
+      if @value.is_a?(Array)
+        if @type.to_s =~ /^previous_/ # these behave more like messages
+          @value.join
+        else
+          @value.join(' ')
+        end
+      else
+        @value
+      end
     end
 
     def inspect
