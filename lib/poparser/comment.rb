@@ -38,7 +38,7 @@ module PoParser
         if @type.to_s =~ /^previous_/ # these behave more like messages
           @value.join
         else
-          @value.join(' ')
+          @value.join("\n")
         end
       else
         @value
