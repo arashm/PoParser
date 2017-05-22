@@ -5,13 +5,22 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require 'poparser'
-require 'parslet/rig/rspec'
+require 'simplecov'
 require 'coveralls'
 require 'awesome_print'
 require 'pry'
 
-Coveralls.wear!
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+  [SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter]
+  )
+
+SimpleCov.start do
+    add_group "gem", "lib"
+    add_group "spec", "spec"
+end
+
+require 'poparser'
 
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!

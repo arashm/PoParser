@@ -39,11 +39,11 @@ describe PoParser::Po do
     expect(@po.untranslated.size).to eq 2
   end
 
-  it 'returns all cached strings' do
+  it 'returns all obsolete strings' do
     entry2, entry3 = entry.dup, entry.dup
-    [entry2, entry3].each { |en| en[:cached] = 'test' }
+    [entry2, entry3].each { |en| en[:obsolete] = 'test' }
     @po << [entry, entry2, entry3]
-    expect(@po.cached.size).to eq 2
+    expect(@po.obsolete.size).to eq 2
   end
 
   it 'shows stats' do
@@ -58,10 +58,10 @@ describe PoParser::Po do
     expect(result[:fuzzy]).to eq 25
   end
 
-  it 'shouldn\'t count cached entries' do
+  it 'shouldn\'t count obsolete entries' do
     @po << entry
-    cached = { cached: 'sth', flag: 'Fuzzy' }
-    @po << cached
+    obsolete = { obsolete: 'sth', flag: 'Fuzzy' }
+    @po << obsolete
     expect(@po.size).to eq(1)
   end
 

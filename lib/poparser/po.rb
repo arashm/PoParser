@@ -38,14 +38,14 @@ module PoParser
 
     # Returns an array of all entries in po file
     #
-    # @param include_cached [Boolean] Whether include cached entries or not
+    # @param include_obsolete [Boolean] Whether include obsolete entries or not
     # @return [Array]
-    def entries(include_cached=false)
-      if include_cached
+    def entries(include_obsolete=false)
+      if include_obsolete
         @entries
       else
         find_all do |entry|
-          !entry.cached?
+          !entry.obsolete?
         end
       end
     end
@@ -78,17 +78,17 @@ module PoParser
       end
     end
 
-    # Finds all cached entries
+    # Finds all obsolete entries
     #
-    # @return [Array] an array of cached entries
-    def cached
+    # @return [Array] an array of obsolete entries
+    def obsolete
       find_all do |entry|
-        entry.cached?
+        entry.obsolete?
       end
     end
-    alias_method :obsolete, :cached
+    alias_method :obsolete, :obsolete
 
-    # Count of all entries without counting cached entries
+    # Count of all entries without counting obsolete entries
     #
     # @return [String]
     def size

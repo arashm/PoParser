@@ -10,6 +10,7 @@ end
 group :development do
   gem 'pry-byebug', :platforms => :mri
   gem 'guard-rspec'
+  gem 'ruby-prof'
 end
 
 # Specify your gem's dependencies in poparser.gemspec

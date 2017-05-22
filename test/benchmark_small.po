@@ -1,0 +1,46 @@
+# PO benchmark file header
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: m
+msgctxt "AESMM"
+msgid "QtXRl"
+msgid_plural "h"
+msgstr[0] "spfQ9g"
+msgstr[1] "spfQ9g"
+
+# EnfA
+#: EnthqvU2qf6kF
+msgctxt "9ihYCwlIEg=="
+msgid "AloClNt81srB2Op/gEoKap7QvzlMzWBXxMEWLyjI2bQZV3praFAT2jpYhfQmgzu4Wix2tAsOeZV6lZ1TcnRmuHXht8FLfE016Q=="
+msgstr "i+9eqs/otjcsICeBK5MEcfQ5hJOmP++ROezIMcPEWVOEh+XAT1brUoxfqrQAMefK"
+
+#: jg4iou6yRTCJ7XNHeEqikz
+msgctxt "9dPrCW63vhWJwoO"
+msgid ""
+"ZPcE\n"
+"llqi4\n"
+msgstr ""
+"sKNQc\n"
+"BwQ\n"
+
+#: Ld
+#, fuzzy
+#| msgctxt "M6J"
+#| msgid "P4"
+msgctxt "MA9k"
+msgid "P4Zc"
+msgstr "4ZcKx"
+
+#: g3K
+#~ msgctxt "CVdDY"
+#~ msgid ""
+#~ "8Jw\n"
+#~ "dwtm\n"
+#~ msgstr ""
+#~ "KNV2\n"
+#~ "lEWV\n"
