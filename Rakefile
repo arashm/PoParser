@@ -6,9 +6,6 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
 
-require 'geminabox-release'
-GeminaboxRelease.patch(:use_config => true, :remove_release => true)
-
 desc "Generate a random po file. Takes optional rake args for number of entries"
 task 'generate_random_pofile', :messages, :obsoletes do |t, args|
   args.with_defaults(:messages => "200", :obsoletes => "10")
@@ -20,7 +17,7 @@ end
 
 namespace :debug do
   require 'benchmark'
-  require 'poparser'
+  require_relative 'lib/poparser'
 
   desc "Benchmark of 10 full PoParser runs of test/benchmark.po"
   task "benchmark" do
