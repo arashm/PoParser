@@ -1,3 +1,8 @@
+3.0.1 / 2017-06-01
+==================
+
+  * Update poparser.gemspec (#18)
+
 3.0.0 / 2017-03-03
 ==================
   * replaced parslet with simple_po_parser. Speedup parsing by up to 500x.
