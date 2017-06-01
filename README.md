@@ -226,13 +226,13 @@ You can get and set following variables from `header`:
   plural_forms
 ```
 
-##To-Do
+## To-Do
 
 * Streaming support
 * Update header after changing/saving po
 * add `before_save` and `after_save` callbacks
 
-##Authors
+## Authors
 
 [Arash Mousavi](https://github.com/arashm)
 
