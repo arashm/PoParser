@@ -110,7 +110,7 @@ describe PoParser::Entry do
   context 'obsolete' do
     before do
       @entry = PoParser::Entry.new
-      @entry.obsolete = '#~ msgid "a obsolete entry"'
+      @entry.obsolete = ['#~ msgid "a obsolete entry"', '#~ msgstr ""']
       @entry.flag = 'Fuzzy'
     end
 
@@ -130,5 +130,21 @@ describe PoParser::Entry do
     it 'shouldn\'t mark it as fuzzy' do
       expect(@entry.fuzzy?).to be_falsy
     end
+
+    it 'should further parse the obsolete content' do
+      path = Pathname.new('spec/poparser/fixtures/complex_obsolete.po').realpath
+      @po = PoParser::Tokenizer.new.extract_entries(path)
+      obsolete_entry = @po.obsolete.first
+      expect(obsolete_entry.obsolete?).to be_truthy
+      expect(obsolete_entry.msgctxt.value).to eq('Context')
+      expect(obsolete_entry.msgid.value).to eq('msgid')
+      expect(obsolete_entry.msgid_plural.value).to eq(['multiline msgid_plural\n', ''])
+      expect(obsolete_entry.previous_msgctxt.value).to eq('previous context')
+      expect(obsolete_entry.previous_msgid.value).to eq(
+        ['multiline\n', 'previous messageid']
+      )
+      expect(obsolete_entry.previous_msgid_plural.value).to eq('previous msgid_plural')
+    end
+
   end
 end

@@ -86,7 +86,7 @@ module PoParser
         entry.obsolete?
       end
     end
-    alias_method :obsolete, :obsolete
+    alias_method :cached, :obsolete
 
     # Count of all entries without counting obsolete entries
     #

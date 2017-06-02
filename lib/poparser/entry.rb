@@ -23,6 +23,13 @@ module PoParser
       # alias for backward compatibility of this typo
       self.class.send(:alias_method, :refrence, :reference)
       self.class.send(:alias_method, :refrence=, :reference=)
+      if self.obsolete?
+        obsolete_content = SimplePoParser.parse_message(obsolete.value.join("\n").gsub(/^\|/, "#|"))
+        obsolete_content.each do |name, value|
+          raise(ArgumentError, "Unknown label #{name}") if !valid_label? name
+          set_instance_variable(name, value)
+        end
+      end
     end
 
     # If entry doesn't have any msgid, it's probably a obsolete entry that is
