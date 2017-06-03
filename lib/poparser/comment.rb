@@ -5,13 +5,16 @@ module PoParser
     def initialize(type, value)
       @type = type
       @value  = value
+
+      if @type.to_s =~ /^previous_/ # these behave more like messages
+        remove_empty_line
+      end
     end
 
     def to_s(with_label = false)
       return to_str unless with_label
       if @value.is_a? Array
         if @type.to_s =~ /^previous_/ # these behave more like messages
-          remove_empty_line
           string = ["#{COMMENTS_LABELS[@type]} \"\"\n"]
           @value.each do |str|
             string << "#| \"#{str}\"\n".gsub(/[\p{Blank}]+$/, '')

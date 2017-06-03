@@ -41,7 +41,7 @@ describe PoParser::Po do
 
   it 'returns all obsolete strings' do
     entry2, entry3 = entry.dup, entry.dup
-    [entry2, entry3].each { |en| en[:obsolete] = 'test' }
+    [entry2, entry3].each { |en| en[:obsolete] = ['msgid "test"', 'msgstr "test"'] }
     @po << [entry, entry2, entry3]
     expect(@po.obsolete.size).to eq 2
   end
@@ -60,7 +60,7 @@ describe PoParser::Po do
 
   it 'shouldn\'t count obsolete entries' do
     @po << entry
-    obsolete = { obsolete: 'sth', flag: 'Fuzzy' }
+    obsolete = { obsolete: ['msgid "sth"', 'msgstr "sth"'], flag: 'Fuzzy' }
     @po << obsolete
     expect(@po.size).to eq(1)
   end
@@ -124,4 +124,5 @@ describe PoParser::Po do
         }.to raise_error(RuntimeError, "Duplicate entry, header was already instantiated")
     end
   end
+
 end
