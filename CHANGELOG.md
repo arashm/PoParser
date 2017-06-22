@@ -1,3 +1,12 @@
+
+3.1.1 / 2017-06-22
+==================
+
+  * force the tokenizer to load files in utf-8 (#20)
+    This will fix the issue with the lib not working correctly on Windows.
+    Courtesy of @damphyr
+  * Review readme
+
 3.1.0 / 2017-06-04
 ==================
 
