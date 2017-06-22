@@ -7,7 +7,7 @@ module PoParser
 
     def extract_entries(path)
       @po.path = path
-      File.open(path, 'r').each_line("\n\n") do |block|
+      File.open(path, 'r:utf-8').each_line("\n\n") do |block|
         block.strip!
         @po << parse_block(block) if block != ''
       end
