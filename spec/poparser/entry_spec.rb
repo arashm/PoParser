@@ -132,8 +132,8 @@ describe PoParser::Entry do
     end
 
     it 'should further parse the obsolete content' do
-      path = Pathname.new('spec/poparser/fixtures/complex_obsolete.po').realpath
-      @po = PoParser::Tokenizer.new.extract_entries(path)
+      file = File.read('spec/poparser/fixtures/complex_obsolete.po')
+      @po = PoParser::Tokenizer.new.extract(file)
       obsolete_entry = @po.obsolete.first
       expect(obsolete_entry.obsolete?).to be_truthy
       expect(obsolete_entry.msgctxt.value).to eq('Context')

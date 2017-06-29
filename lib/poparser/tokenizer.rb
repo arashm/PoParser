@@ -1,22 +1,33 @@
 module PoParser
   # Feed each block of PO file to Parser.
   class Tokenizer
-    def initialize
+    def initialize(is_file = false)
       @po = Po.new
+      @is_file = is_file
     end
 
-    def extract_entries(path)
-      @po.path = path
-      File.open(path, 'r:utf-8').each_line("\n\n") do |block|
-        block.strip!
-        @po << parse_block(block) if block != ''
+    def extract(payload)
+      if @is_file
+        @po.path = payload
+        payload = File.read(payload, mode: 'r:utf-8')
       end
-      @po
+
+      extract_entries(payload)
     end
 
   private
+
     def parse_block(block)
-      hash = SimplePoParser.parse_message(block)
+      SimplePoParser.parse_message(block)
+    end
+
+    def extract_entries(payload)
+      payload.split("\n\n").each do |block|
+        block.strip!
+        @po << parse_block(block) if block != ''
+      end
+
+      @po
     end
   end
 end

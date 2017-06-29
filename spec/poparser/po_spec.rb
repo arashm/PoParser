@@ -11,7 +11,7 @@ describe PoParser::Po do
     }
   end
 
-  before(:each) do
+  before do
     @po = PoParser::Po.new
   end
 
@@ -68,7 +68,7 @@ describe PoParser::Po do
   context 'search' do
     before do
       path = Pathname.new('spec/poparser/fixtures/test.po').realpath
-      @po = PoParser::Tokenizer.new.extract_entries(path)
+      @po = PoParser::Tokenizer.new(true).extract(path)
     end
 
     it 'raises error if label is not valid' do
@@ -87,7 +87,7 @@ describe PoParser::Po do
   context 'Header' do
     before do
       path = Pathname.new('spec/poparser/fixtures/header.po').realpath
-      @po = PoParser::Tokenizer.new.extract_entries(path)
+      @po = PoParser::Tokenizer.new(true).extract(path)
     end
 
     it 'should respond to header' do
@@ -119,9 +119,10 @@ describe PoParser::Po do
 
     it 'throws error if there\'re two header string' do
       path = Pathname.new('spec/poparser/fixtures/header_error.po').realpath
+
       expect{
-        @po = PoParser::Tokenizer.new.extract_entries(path)
-        }.to raise_error(RuntimeError, "Duplicate entry, header was already instantiated")
+        PoParser::Tokenizer.new(true).extract(path)
+      }.to raise_error(RuntimeError, "Duplicate entry, header was already instantiated")
     end
   end
 

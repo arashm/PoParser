@@ -3,6 +3,7 @@ require "spec_helper"
 
 describe PoParser do
   let(:po_file) { Pathname.new('spec/poparser/fixtures/tokenizer.po').realpath }
+  let(:po_file_content) { File.read('spec/poparser/fixtures/tokenizer.po') }
   let(:header_fixture) { Pathname.new('spec/poparser/fixtures/header.po').realpath }
   let(:multiline_fixture) { Pathname.new('spec/poparser/fixtures/multiline.po').realpath }
   let(:plural_fixture) { Pathname.new('spec/poparser/fixtures/plural.po').realpath }
@@ -10,6 +11,20 @@ describe PoParser do
 
   it 'parses a file' do
     expect(PoParser.parse(po_file)).to be_a_kind_of PoParser::Po
+  end
+
+  it 'should print deprecation warning when passing file to parse' do
+    expect(Kernel).to receive(:warn).with(
+      'DEPRICATION WARNING: `parse` only accepts content of a PO '\
+      'file as a string and this behaviour will be removed on next major '\
+      'release. Use `parse_file` instead.'
+    ).once
+
+    PoParser.parse(po_file)
+  end
+
+  it 'parses a payload' do
+    expect(PoParser.parse(po_file_content)).to be_a_kind_of PoParser::Po
   end
 
   it 'correclty parses header fixture' do
@@ -132,5 +147,4 @@ describe PoParser do
     allow_any_instance_of(PoParser::Header).to receive(:puts)
     expect(PoParser.parse(test_fixture).to_s).to eq(expected_result.to_s)
   end
-
 end

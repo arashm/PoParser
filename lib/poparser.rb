@@ -13,8 +13,19 @@ require_relative 'poparser/version'
 
 module PoParser
   class << self
-    def parse(path)
-      Tokenizer.new.extract_entries(path)
+    def parse(payload)
+      if File.exist?(payload)
+        Kernel.warn 'DEPRICATION WARNING: `parse` only accepts content of a '\
+          'PO file as a string and this behaviour will be removed on next '\
+          'major release. Use `parse_file` instead.'
+        parse_file(payload)
+      else
+        Tokenizer.new.extract(payload)
+      end
+    end
+
+    def parse_file(path)
+      Tokenizer.new(true).extract(path)
     end
   end
 end
