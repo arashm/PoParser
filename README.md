@@ -27,9 +27,16 @@ Working with the GEM is pretty easy:
 
 ```ruby
 require 'poparser'
+
+content = File.read('example.po')
+po = PoParser.parse(content)
+# => <PoParser::Po, Translated: 68.1% Untranslated: 20.4% Fuzzy: 11.5%>
+
+# Or you could pass a file path:
+
 path = Pathname.new('example.po')
-po   = PoParser.parse(path)
-=> <PoParser::Po, Translated: 68.1% Untranslated: 20.4% Fuzzy: 11.5%>
+po = PoParser.parse_file(path)
+# => <PoParser::Po, Translated: 68.1% Untranslated: 20.4% Fuzzy: 11.5%>
 ```
 
 The `parse` method returns a `PO` object which contains all `Entries`:
