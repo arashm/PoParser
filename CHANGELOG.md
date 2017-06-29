@@ -1,4 +1,10 @@
 
+3.2.0 / 2017-06-29
+==================
+
+  * Deprecate passing path to parse and introduce parse_file
+  * Drop ruby 2.1 since it is not supported any more
+
 3.1.1 / 2017-06-22
 ==================
 
