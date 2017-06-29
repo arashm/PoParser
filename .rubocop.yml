@@ -1,0 +1,35 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+  - 'spec/**/*'
+  - 'db/**/*'
+  - 'app/views/**/*'
+  - 'config/**/*'
+  - 'bin/*'
+  - 'Rakefile'
+  - 'node_modules/**/*'
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'lib/tasks/**/*'
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Layout/AccessModifierIndentation:
+  EnforcedStyle: outdent
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%i': '()'
+    '%w': '()'
