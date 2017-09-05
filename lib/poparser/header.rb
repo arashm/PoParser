@@ -7,7 +7,7 @@ module PoParser
 
     def initialize(entry)
       @entry            = entry
-      @comments         = entry.translator_comment.value
+      @comments         = entry.translator_comment.value unless entry.translator_comment.nil?
       @original_configs = convert_msgstr_to_hash(entry.msgstr)
       @flag             = entry.flag
 
