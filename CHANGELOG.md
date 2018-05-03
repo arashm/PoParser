@@ -1,4 +1,4 @@
-3.2.1 / 2017-09-05
+3.2.2 / 2018-05-03
 ==================
 
   * Fix warning in JRuby 9.1.14.0 Courtesy of @remofritzsche
