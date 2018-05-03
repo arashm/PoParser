@@ -109,7 +109,7 @@ module PoParser
     def merge_to_previous_string(array)
       array.each_with_index do |key, index|
         if key.length == 1
-          array[index -1][1] += key[0]
+          array[index - 1][1] += key[0]
           array.delete_at(index)
         end
       end
