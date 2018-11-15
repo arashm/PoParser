@@ -42,12 +42,17 @@ module PoParser
     #   
     #   delete(entry)
     #
-    # @param entry entry to delete
+    # @param entry  [PoParser::Entry] entry to delete
     # @return [None]
     def delete(entry)
-      @entries.delete(entry)
+      puts entry.class.name
+      if entry.kind_of? PoParser::Entry
+        @entries.delete(entry)
+      else
+        raise ArgumentError, 'Must be an entry'
+      end
+      self
     end
-    alias_method :remove
 
     # Returns an array of all entries in po file
     #
