@@ -36,6 +36,19 @@ module PoParser
     end
     alias_method :<<, :add
 
+    # delete entry from po file
+    #
+    # @example
+    #   
+    #   delete(entry)
+    #
+    # @param entry entry to delete
+    # @return [None]
+    def delete(entry)
+      @entries.delete(entry)
+    end
+    alias_method :remove
+
     # Returns an array of all entries in po file
     #
     # @param include_obsolete [Boolean] Whether include obsolete entries or not
