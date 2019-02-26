@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # External Libs
 require 'simple_po_parser'
 

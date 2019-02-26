@@ -1,15 +1,18 @@
+# frozen_string_literal: true
+
 module PoParser
   class Entry
     # TODO: raise error if a label is not known
     def initialize(args = {})
       # Defining all instance variables to prevent warnings
       LABELS.each do |label|
-        instance_variable_set "@#{label.to_s}".to_sym, nil
+        instance_variable_set "@#{label}".to_sym, nil
       end
 
       # Set passed arguments
       args.each do |name, value|
-        raise(ArgumentError, "Unknown label #{name}") if !valid_label? name
+        raise(ArgumentError, "Unknown label #{name}") unless valid_label? name
+
         set_instance_variable(name, value)
       end
 
@@ -23,44 +26,46 @@ module PoParser
       # alias for backward compatibility of this typo
       self.class.send(:alias_method, :refrence, :reference)
       self.class.send(:alias_method, :refrence=, :reference=)
-      if self.obsolete?
-        obsolete_content = SimplePoParser.parse_message(obsolete.value.join("\n").gsub(/^\|/, "#|"))
+      if obsolete?
+        obsolete_content = SimplePoParser.parse_message(obsolete.value.join("\n").gsub(/^\|/, '#|'))
         obsolete_content.each do |name, value|
-          raise(ArgumentError, "Unknown label #{name}") if !valid_label? name
+          raise(ArgumentError, "Unknown label #{name}") unless valid_label? name
+
           set_instance_variable(name, value)
         end
       end
     end
 
     # If entry doesn't have any msgid, it's probably a obsolete entry that is
-    # kept by the program for later use. These entries will usually start with: #~
+    # kept by the program for later use. These entries will usually start
+    # with: #~
     #
     # @return [Boolean]
     def obsolete?
       !@obsolete.nil?
     end
-    alias_method :cached?, :obsolete?
+    alias cached? obsolete?
 
     # Checks if the entry is untraslated
     #
     # @return [Boolean]
     def untranslated?
       return false if obsolete? || fuzzy?
-      if @msgstr.is_a? Array
-        return @msgstr.map {|ms| ms.str}.join.empty?
-      end
+      return @msgstr.map(&:str).join.empty? if @msgstr.is_a? Array
+
       @msgstr.nil? || @msgstr.str.empty?
     end
-    alias_method :incomplete? , :untranslated?
+    alias incomplete? untranslated?
 
     # Checks if the entry is translated
     #
     # @return [Boolean]
     def translated?
       return false if obsolete? || fuzzy?
-      not untranslated?
+
+      !untranslated?
     end
-    alias_method :complete? , :translated?
+    alias complete? translated?
 
     # Checks if the entry is plural
     #
@@ -74,7 +79,8 @@ module PoParser
     # @return [Boolean]
     def fuzzy?
       return false if obsolete?
-      @flag.to_s.match('fuzzy') ? true : false
+
+      @flag.to_s.match?('fuzzy') ? true : false
     end
 
     # Flag the entry as Fuzzy
@@ -87,6 +93,7 @@ module PoParser
     # Set flag to a custom string
     def flag_as(flag)
       raise ArgumentError if flag.class != String
+
       @flag = flag
     end
 
@@ -99,10 +106,10 @@ module PoParser
         # If it's a plural msgstr
         if object.is_a? Array
           object.each do |entry|
-            hash[entry.type] = entry.to_s if not entry.nil?
+            hash[entry.type] = entry.to_s unless entry.nil?
           end
         else
-          hash[object.type] = object.to_s if not object.nil?
+          hash[object.type] = object.to_s unless object.nil?
         end
       end
       hash
@@ -117,10 +124,10 @@ module PoParser
         # If it's a plural msgstr
         if object.is_a? Array
           object.each do |entry|
-            lines << entry.to_s(true) if not entry.nil?
+            lines << entry.to_s(true) unless entry.nil?
           end
         else
-          lines << object.to_s(true) if not object.nil?
+          lines << object.to_s(true) unless object.nil?
         end
       end
 
@@ -131,14 +138,14 @@ module PoParser
       to_s
     end
 
-    private
+  private
 
     def set_instance_variable(name, value)
       if COMMENTS_LABELS.include? name
-        instance_variable_set "@#{name.to_s}".to_sym, Comment.new(name, value)
+        instance_variable_set "@#{name}".to_sym, Comment.new(name, value)
       elsif ENTRIES_LABELS.include? name
-        instance_variable_set "@#{name.to_s}".to_sym, Message.new(name, value)
-      elsif name.to_s.match(/^msgstr\[[0-9]\]/)
+        instance_variable_set "@#{name}".to_sym, Message.new(name, value)
+      elsif /^msgstr\[[0-9]\]/.match?(name.to_s)
         # If it's a plural msgstr
         @msgstr ||= []
         @msgstr << Message.new(name, value)
@@ -147,29 +154,29 @@ module PoParser
 
     def define_writer_methods(labels, object)
       object = PoParser.const_get(object)
-      labels.each do |type, mark|
-        unless Entry.method_defined? "#{type}=".to_sym
-          self.class.send(:define_method, "#{type}=".to_sym, lambda { |val|
-            if instance_variable_get("@#{type}".to_sym).is_a? object
-              klass      = instance_variable_get "@#{type}".to_sym
-              klass.type = type
-              klass.value  = val
-            else
-              instance_variable_set "@#{type}".to_sym, object.new(type, val)
-            end
-            # return value
-            instance_variable_get "@#{type}".to_sym
-          })
-        end
+      labels.each do |type, _mark|
+        next if Entry.method_defined? "#{type}=".to_sym
+
+        self.class.send(:define_method, "#{type}=".to_sym, lambda { |val|
+          if instance_variable_get("@#{type}".to_sym).is_a? object
+            klass      = instance_variable_get "@#{type}".to_sym
+            klass.type = type
+            klass.value = val
+          else
+            instance_variable_set "@#{type}".to_sym, object.new(type, val)
+          end
+          # return value
+          instance_variable_get "@#{type}".to_sym
+        })
       end
     end
 
     def define_reader_methods
       LABELS.each do |label|
-        unless Entry.method_defined? "#{label}".to_sym
-          self.class.send(:define_method, label.to_sym) do
-            instance_variable_get "@#{label}".to_sym
-          end
+        next if Entry.method_defined? label.to_s.to_sym
+
+        self.class.send(:define_method, label.to_sym) do
+          instance_variable_get "@#{label}".to_sym
         end
       end
     end

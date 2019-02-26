@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module PoParser
   class Header
     attr_reader :entry, :original_configs, :flag
     attr_accessor :comments, :pot_creation_date, :po_revision_date, :project_id,
-            :report_to, :last_translator, :team, :language, :charset,
-            :encoding, :plural_forms
+      :report_to, :last_translator, :team, :language, :charset,
+      :encoding, :plural_forms
 
     def initialize(entry)
       @entry            = entry
@@ -12,7 +14,7 @@ module PoParser
       @flag             = entry.flag
 
       HEADER_LABELS.each do |k, v|
-        instance_variable_set "@#{k.to_s}".to_sym, @original_configs[v]
+        instance_variable_set "@#{k}".to_sym, @original_configs[v]
       end
     end
 
@@ -28,7 +30,7 @@ module PoParser
     #
     # @return [Boolean]
     def fuzzy?
-      @flag.to_s.match('fuzzy') ? true : false
+      @flag.to_s.match?('fuzzy') ? true : false
     end
 
     # Flag the entry as Fuzzy
@@ -41,6 +43,7 @@ module PoParser
     # Set flag to a custom string
     def flag_as(flag)
       raise ArgumentError if flag.class != String
+
       @flag = flag
     end
 
@@ -57,7 +60,7 @@ module PoParser
       else
         string << "# #{@comments}".strip
       end
-      string << "#, #{@flag.to_s}" if @flag
+      string << "#, #{@flag}" if @flag
       string << "msgid \"\"\nmsgstr \"\""
       configs.each do |k, v|
         if v.nil? || v.empty?
@@ -79,18 +82,18 @@ module PoParser
       else
         string << "# #{@comments}".strip
       end
-      string << "#, #{@flag.to_s}" if @flag
+      string << "#, #{@flag}" if @flag
       string << "msgid \"\"\nmsgstr \"\""
       configs.each do |k, v|
-        if v.nil? || v.empty?
-          next
-        end
+        next if v.nil? || v.empty?
+
         string << "#{k}: #{v}\n".dump
       end
       string.join("\n")
     end
 
   private
+
     def convert_msgstr_to_hash(msgstr)
       options_array = msgstr.value.map do |options|
         options.split(':', 2).each do |k|

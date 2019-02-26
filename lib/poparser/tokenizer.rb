@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PoParser
   # Feed each block of PO file to Parser.
   class Tokenizer

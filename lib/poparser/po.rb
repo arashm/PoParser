@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PoParser
   # Po class keeps all entries of a Po file
   class Po
@@ -25,22 +27,22 @@ module PoParser
     # @param entry [Hash, Array] a hash of entry contents or an array of hashes
     # @return [Po]
     def add(entry)
-      if entry.kind_of? Hash
+      if entry.is_a? Hash
         import_hash(entry)
-      elsif entry.kind_of? Array
+      elsif entry.is_a? Array
         import_array(entry)
       else
         raise ArgumentError, 'Must be a hash or an array of hashes'
       end
       self
     end
-    alias_method :<<, :add
+    alias << add
 
     # Returns an array of all entries in po file
     #
     # @param include_obsolete [Boolean] Whether include obsolete entries or not
     # @return [Array]
-    def entries(include_obsolete=false)
+    def entries(include_obsolete = false)
       if include_obsolete
         @entries
       else
@@ -49,44 +51,36 @@ module PoParser
         end
       end
     end
-    alias_method :all, :entries
+    alias all entries
 
     # Finds all entries that are flaged as fuzzy
     #
     # @return [Array] an array of fuzzy entries
     def fuzzy
-      find_all do |entry|
-        entry.fuzzy?
-      end
+      find_all(&:fuzzy?)
     end
 
     # Finds all entries that are untranslated
     #
     # @return [Array] an array of untranslated entries
     def untranslated
-      find_all do |entry|
-        entry.untranslated?
-      end
+      find_all(&:untranslated?)
     end
 
     # Finds all entries that are translated
     #
     # @return [Array] an array of translated entries
     def translated
-      find_all do |entry|
-        entry.translated?
-      end
+      find_all(&:translated?)
     end
 
     # Finds all obsolete entries
     #
     # @return [Array] an array of obsolete entries
     def obsolete
-      find_all do |entry|
-        entry.obsolete?
-      end
+      find_all(&:obsolete?)
     end
-    alias_method :cached, :obsolete
+    alias cached obsolete
 
     # Count of all entries without counting obsolete entries
     #
@@ -94,7 +88,7 @@ module PoParser
     def size
       entries.length
     end
-    alias_method :length, :size
+    alias length size
 
     # Search for entries with provided string
     #
@@ -102,7 +96,7 @@ module PoParser
     # @param string [String] String to search for
     # @return [Array] Array of matched entries
     def search_in(label, string)
-      if !LABELS.include? label.to_sym
+      unless LABELS.include? label.to_sym
         raise ArgumentError, "Unknown key: #{label}"
       end
 
@@ -121,9 +115,9 @@ module PoParser
       fuzzy_size        = fuzzy.size
 
       {
-        translated:   percentage(translated_size),
+        translated: percentage(translated_size),
         untranslated: percentage(untranslated_size),
-        fuzzy:        percentage(fuzzy_size)
+        fuzzy: percentage(fuzzy_size),
       }
     end
 
@@ -146,7 +140,7 @@ module PoParser
       array = []
       array << @header.to_s if @header
       # add a blank line after header
-      array << ""
+      array << ''
       @entries.each do |entry|
         array << entry.to_s
       end
@@ -156,6 +150,7 @@ module PoParser
     # Saves the file to the provided path
     def save_file
       raise ArgumentError, 'Need a Path to save the file' if @path.nil?
+
       File.open(@path, 'w') do |f|
         f.write to_s
       end
@@ -172,12 +167,13 @@ module PoParser
     end
 
   private
+
     # calculates percentages based on total number of entries
     #
     # @param [Integer] number of entries
     # @return [Float] percentage of the provided entries
     def percentage(count)
-      ((count.to_f / self.size) * 100).round(1)
+      ((count.to_f / size) * 100).round(1)
     end
 
     def import_hash(entry)
@@ -191,8 +187,9 @@ module PoParser
     end
 
     def add_entry(entry)
-      if entry[:msgid] && entry[:msgid].length == 0
-        raise(RuntimeError, "Duplicate entry, header was already instantiated") if @header != nil
+      if entry[:msgid]&.empty?
+        raise('Duplicate entry, header was already instantiated') unless @header.nil?
+
         @header = Header.new(Entry.new(entry))
       else
         @entries << Entry.new(entry)
