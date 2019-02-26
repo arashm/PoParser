@@ -1,13 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.6
   Exclude:
   - 'spec/**/*'
-  - 'db/**/*'
-  - 'app/views/**/*'
-  - 'config/**/*'
   - 'bin/*'
-  - 'Rakefile'
-  - 'node_modules/**/*'
 
 Bundler/OrderedGems:
   Enabled: false
@@ -27,9 +22,24 @@ Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
 Style/FrozenStringLiteralComment:
-  Enabled: false
+  Enabled: true
 
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     '%i': '()'
     '%w': '()'
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArguments:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Layout/EmptyLines:
+  Enabled: true
