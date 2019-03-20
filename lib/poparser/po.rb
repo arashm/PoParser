@@ -45,13 +45,8 @@ module PoParser
     # @param entry  [PoParser::Entry] entry to delete
     # @return [None]
     def delete(entry)
-      puts entry.class.name
-      if entry.kind_of? PoParser::Entry
-        @entries.delete(entry)
-      else
-        raise ArgumentError, 'Must be an entry'
-      end
-      self
+      raise ArgumentError, 'Must be an entry' unless entry.kind_of? PoParser::Entry
+      return @entries.delete(entry)
     end
 
     # Returns an array of all entries in po file

@@ -23,8 +23,9 @@ describe PoParser::Po do
   it 'should be able to remove an entry from Po' do
     entries = [entry, entry.dup]
     @po << entries
-    @po.entries.delete(@po.entries.first)
-    expect(@po.entries.length).to eq 1
+    e = @po.entries.first
+    expect(@po.delete(e)).to eq e
+    expect(@po.delete(e)).to eq nil
   end
 
   it 'should be able to add multiple entries' do
