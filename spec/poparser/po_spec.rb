@@ -23,7 +23,7 @@ describe PoParser::Po do
   it 'should be able to remove an entry from Po' do
     entries = [entry, entry.dup]
     @po << entries
-    expect(@po.delete(@po.entries.first)).to be_a_kind_of PoParser::Po
+    @po.entries.delete(@po.entries.first)
     expect(@po.entries.length).to eq 1
   end
 
