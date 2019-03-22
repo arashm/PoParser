@@ -43,3 +43,7 @@ Style/TrailingCommaInArguments:
 
 Layout/EmptyLines:
   Enabled: true
+
+Metrics/LineLength:
+  Max: 100
+  IgnoreCopDirectives: True

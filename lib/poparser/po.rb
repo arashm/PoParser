@@ -27,14 +27,10 @@ module PoParser
     # @param entry [Hash, Array] a hash of entry contents or an array of hashes
     # @return [Po]
     def add(entry)
-      if entry.is_a? Hash
-        import_hash(entry)
-      elsif entry.is_a? Array
-        import_array(entry)
-      else
-        raise ArgumentError, 'Must be a hash or an array of hashes'
-      end
-      self
+      return import_hash(entry) if entry.is_a?(Hash)
+      return import_array(entry) if entry.is_a?(Array)
+
+      raise ArgumentError, 'Must be a hash or an array of hashes'
     end
     alias << add
 
@@ -47,7 +43,7 @@ module PoParser
     # @param entry [Entry] to be deleted
     # @return [Entry]
     def delete(entry)
-      raise(ArgumentError, 'Must be an entry') unless entry.kind_of?(PoParser::Entry)
+      raise(ArgumentError, 'Must be an Entry') unless entry.is_a?(PoParser::Entry)
 
       @entries.delete(entry)
     end
@@ -57,13 +53,9 @@ module PoParser
     # @param include_obsolete [Boolean] Whether include obsolete entries or not
     # @return [Array]
     def entries(include_obsolete = false)
-      if include_obsolete
-        @entries
-      else
-        find_all do |entry|
-          !entry.obsolete?
-        end
-      end
+      return @entries if include_obsolete
+
+      find_all { |entry| !entry.obsolete? }
     end
     alias all entries
 
@@ -110,9 +102,7 @@ module PoParser
     # @param string [String] String to search for
     # @return [Array] Array of matched entries
     def search_in(label, string)
-      unless LABELS.include? label.to_sym
-        raise ArgumentError, "Unknown key: #{label}"
-      end
+      raise(ArgumentError, "Unknown key: #{label}") unless LABELS.include?(label.to_sym)
 
       find_all do |entry|
         text = entry.send(label).str
@@ -139,11 +129,8 @@ module PoParser
     #
     # @return [Array] array of hashes of entries
     def to_h
-      array = []
-      array << @header.to_h if @header
-      @entries.each do |entry|
-        array << entry.to_h
-      end
+      array = @entries.map(&:to_h)
+      array.prepend(@header.to_h) if @header
       array
     end
 
@@ -151,13 +138,9 @@ module PoParser
     #
     # @return [String]
     def to_s
-      array = []
-      array << @header.to_s if @header
+      array = @entries.map(&:to_s)
       # add a blank line after header
-      array << ''
-      @entries.each do |entry|
-        array << entry.to_s
-      end
+      array.prepend(@header.to_s, '') if @header
       array.join("\n")
     end
 
@@ -165,9 +148,7 @@ module PoParser
     def save_file
       raise ArgumentError, 'Need a Path to save the file' if @path.nil?
 
-      File.open(@path, 'w') do |f|
-        f.write to_s
-      end
+      File.open(@path, 'w') { |file| file.write(to_s) }
     end
 
     def each
@@ -177,10 +158,12 @@ module PoParser
     end
 
     def inspect
-      "<#{self.class.name}, Translated: #{translated.length}(#{stats[:translated]}%) Untranslated: #{untranslated.length}(#{stats[:untranslated]}%) Fuzzy: #{fuzzy.length}(#{stats[:fuzzy]}%)>"
+      "<#{self.class.name}, Translated: #{translated.length}"\
+        "(#{stats[:translated]}%) Untranslated: #{untranslated.length}"\
+        "(#{stats[:untranslated]}%) Fuzzy: #{fuzzy.length}(#{stats[:fuzzy]}%)>"
     end
 
-    private
+  private
 
     # calculates percentages based on total number of entries
     #
@@ -192,22 +175,28 @@ module PoParser
 
     def import_hash(entry)
       add_entry(entry)
+
+      self
     end
 
     def import_array(entry)
-      entry.each do |en|
-        add_entry(en)
-      end
+      entry.each { |en| add_entry(en) }
+
+      self
     end
 
+    # rubocop:disable Style/SafeNavigation
     def add_entry(entry)
-      if entry[:msgid]&.empty?
-        raise('Duplicate entry, header was already instantiated') unless @header.nil?
+      return add_header_entry(entry) if entry[:msgid] && entry[:msgid].empty?
 
-        @header = Header.new(Entry.new(entry))
-      else
-        @entries << Entry.new(entry)
-      end
+      @entries << Entry.new(entry)
+    end
+    # rubocop:enable Style/SafeNavigation
+
+    def add_header_entry(entry)
+      raise('Duplicate entry, header was already instantiated') if @header
+
+      @header = Header.new(Entry.new(entry))
     end
   end
 end
