@@ -25,7 +25,7 @@ describe PoParser::Po do
     @po << entries
     e = @po.entries.first
     expect(@po.delete(e)).to eq e
-    expect(@po.delete(e)).to eq nil
+    expect(@po.delete(e)).to be_nil
   end
 
   it 'should be able to add multiple entries' do
@@ -133,5 +133,4 @@ describe PoParser::Po do
       }.to raise_error(RuntimeError, "Duplicate entry, header was already instantiated")
     end
   end
-
 end

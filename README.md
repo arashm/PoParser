@@ -105,7 +105,6 @@ You can remove entries from the PO file:
 
 ```ruby
 po.delete(entry)
-
 ```
 
 ### Entry

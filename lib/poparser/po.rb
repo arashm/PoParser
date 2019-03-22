@@ -38,17 +38,18 @@ module PoParser
     end
     alias << add
 
-    # delete entry from po file
+    # Delete entry from po file
     #
     # @example
-    #   
+    #
     #   delete(entry)
     #
-    # @param entry  [PoParser::Entry] entry to delete
-    # @return [None]
+    # @param entry [Entry] to be deleted
+    # @return [Entry]
     def delete(entry)
-      raise ArgumentError, 'Must be an entry' unless entry.kind_of? PoParser::Entry
-      return @entries.delete(entry)
+      raise(ArgumentError, 'Must be an entry') unless entry.kind_of?(PoParser::Entry)
+
+      @entries.delete(entry)
     end
 
     # Returns an array of all entries in po file
@@ -179,7 +180,7 @@ module PoParser
       "<#{self.class.name}, Translated: #{translated.length}(#{stats[:translated]}%) Untranslated: #{untranslated.length}(#{stats[:untranslated]}%) Fuzzy: #{fuzzy.length}(#{stats[:fuzzy]}%)>"
     end
 
-  private
+    private
 
     # calculates percentages based on total number of entries
     #
