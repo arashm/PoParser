@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module PoParser
+  # The very first entry of the PO file is considered the header
   class Header
     attr_reader :entry, :original_configs, :flag
     attr_accessor :comments, :pot_creation_date, :po_revision_date, :project_id,
@@ -13,17 +14,14 @@ module PoParser
       @original_configs = convert_msgstr_to_hash(entry.msgstr)
       @flag             = entry.flag
 
-      HEADER_LABELS.each do |k, v|
-        instance_variable_set "@#{k}".to_sym, @original_configs[v]
-      end
+      define_labels_instance_variables
     end
 
     def configs
-      hash = {}
-      HEADER_LABELS.each do |k, v|
+      configs = HEADER_LABELS.each_with_object({}) do |(k, v), hash|
         hash[v] = instance_variable_get "@#{k}".to_sym
       end
-      @original_configs.merge(hash)
+      @original_configs.merge(configs)
     end
 
     # Checks if the entry is fuzzy
@@ -34,6 +32,7 @@ module PoParser
     end
 
     # Flag the entry as Fuzzy
+    #
     # @return [Header]
     def flag_as_fuzzy
       @flag = 'fuzzy'
@@ -111,10 +110,16 @@ module PoParser
     # [['a', 'b'], ['c']] #=> [['a', 'bc']]
     def merge_to_previous_string(array)
       array.each_with_index do |key, index|
-        if key.length == 1
-          array[index - 1][1] += key[0]
-          array.delete_at(index)
-        end
+        next unless key.length == 1
+
+        array[index - 1][1] += key[0]
+        array.delete_at(index)
+      end
+    end
+
+    def define_labels_instance_variables
+      HEADER_LABELS.each do |k, v|
+        instance_variable_set("@#{k}".to_sym, @original_configs[v])
       end
     end
   end
