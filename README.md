@@ -101,12 +101,6 @@ new_entry = {
 
 _Note_: currently `PoParser` won't warn you if you add a `msgstr[0]` without `msgid_plural`, any `msgid` at all or even if the index numbers in `msgstr[0]` are not in any logical order.
 
-You can remove entries from the PO file:
-
-```ruby
-po.delete(entry)
-```
-
 ### Entry
 
 Each entry can have following properties (for more information see [GNU PO file specification](https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html)):
@@ -179,6 +173,12 @@ It's possible to get Hash and String representation of the `Entry`:
 ```ruby
 entry.to_h
 entry.to_s
+```
+
+To remove an entry from the PO, use `PO#delete`
+
+```ruby
+po.delete(entry)
 ```
 
 ### Searching
