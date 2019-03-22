@@ -38,6 +38,19 @@ module PoParser
     end
     alias << add
 
+    # delete entry from po file
+    #
+    # @example
+    #   
+    #   delete(entry)
+    #
+    # @param entry  [PoParser::Entry] entry to delete
+    # @return [None]
+    def delete(entry)
+      raise ArgumentError, 'Must be an entry' unless entry.kind_of? PoParser::Entry
+      return @entries.delete(entry)
+    end
+
     # Returns an array of all entries in po file
     #
     # @param include_obsolete [Boolean] Whether include obsolete entries or not

@@ -20,6 +20,14 @@ describe PoParser::Po do
     expect(@po << entry).to be_a_kind_of PoParser::Po
   end
 
+  it 'should be able to remove an entry from Po' do
+    entries = [entry, entry.dup]
+    @po << entries
+    e = @po.entries.first
+    expect(@po.delete(e)).to eq e
+    expect(@po.delete(e)).to eq nil
+  end
+
   it 'should be able to add multiple entries' do
     entries = [entry, entry.dup]
     expect(@po << entries).to be_a_kind_of PoParser::Po
