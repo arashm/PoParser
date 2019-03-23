@@ -1,7 +1,8 @@
-3.2.3 / 2018-11-15
+3.2.3 / 2019-03-23
 ==================
 
-  * Entries can be removed Courtesy of @lremes
+  * Entries can be removed, Courtesy of @lremes
+  * Cleanups and refactors
 
 3.2.2 / 2018-05-03
 ==================
