@@ -130,7 +130,7 @@ module PoParser
     # @return [Array] array of hashes of entries
     def to_h
       array = @entries.map(&:to_h)
-      array.prepend(@header.to_h) if @header
+      array.unshift(@header.to_h) if @header
       array
     end
 
@@ -140,7 +140,7 @@ module PoParser
     def to_s
       array = @entries.map(&:to_s)
       # add a blank line after header
-      array.prepend(@header.to_s, '') if @header
+      array.unshift(@header.to_s, '') if @header
       array.join("\n")
     end
 
