@@ -101,7 +101,7 @@ module PoParser
         object = instance_variable_get("@#{label}".to_sym)
         # If it's a plural msgstr
         if object.is_a?(Array)
-          arr.append(*object.map { |entry| entry.to_s(true) }.compact)
+          arr.push(*object.map { |entry| entry.to_s(true) }.compact)
         else
           arr << object.to_s(true) unless object.nil?
         end
