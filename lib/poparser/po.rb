@@ -9,7 +9,7 @@ module PoParser
 
     def initialize(args = {})
       @entries = []
-      @path    = args.fetch(:path, nil)
+      @path    = args[:path]
     end
 
     # add new entries to po file
