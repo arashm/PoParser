@@ -20,11 +20,11 @@ msgstr \"\"
       File.open(file_path, 'w+') do |file|
         file.write header
         file.write "\n\n"
-        for i in 0..length-obsoletes do
+        length-obsoletes.times do
           file.write generate_random_message
         end
 
-        for i in 0...obsoletes do
+        obsoletes.times do
           file.write generate_random_message(true)
         end
       end
@@ -61,7 +61,7 @@ msgstr \"\"
         lines = (@random.rand*4.0).ceil
         msgid = []
         msgstr = []
-        for i in 0..lines
+        lines.times do
           msgid[i] = SecureRandom.base64((@random.rand*70.0).ceil)
           msgstr[i] = SecureRandom.base64((@random.rand*70.0).ceil)
         end
@@ -73,7 +73,7 @@ msgstr \"\"
         if multiline
           msgid_plural = []
           msgstr_plural = []
-          for i in 0..lines
+          lines.times
             msgid_plural[i] = SecureRandom.base64((@random.rand*70.0).ceil)
             msgstr_plural[i] = SecureRandom.base64((@random.rand*70.0).ceil)
           end
@@ -88,7 +88,7 @@ msgstr \"\"
       random_message += "#: #{SecureRandom.base64((@random.rand*50.0).to_i)}\n" if reference
       if multiple_reference
         references = (@random.rand*3.0).ceil
-        for i in 0..references
+        references.times do
           random_message += "#: #{SecureRandom.base64((@random.rand*50.0).to_i)}\n"
         end
       end
