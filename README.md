@@ -1,7 +1,7 @@
 # PoParser
 
-[![Build Status](https://travis-ci.org/arashm/PoParser.svg?branch=master)](https://travis-ci.org/arashm/PoParser)
-[![Coverage Status](https://img.shields.io/coveralls/arashm/PoParser.svg)](https://coveralls.io/r/arashm/PoParser)
+![Build Status](https://github.com/arashm/poparser/workflows/Ruby/badge.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/arashm/PoParser/badge.svg)](https://coveralls.io/github/arashm/PoParser)
 [![Code Climate](https://codeclimate.com/github/arashm/PoParser.png)](https://codeclimate.com/github/arashm/PoParser)
 [![Gem Version](https://badge.fury.io/rb/PoParser.svg)](http://badge.fury.io/rb/PoParser)
 
