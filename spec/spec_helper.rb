@@ -6,18 +6,24 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'simplecov'
-require 'coveralls'
+require 'simplecov-lcov'
 require 'awesome_print'
-require 'pry'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-  [SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter]
-  )
+SimpleCov::Formatter::LcovFormatter.config do |c|
+  c.report_with_single_file = true
+  c.single_report_path = 'coverage/lcov.info'
+end
+
+SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
+  [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::LcovFormatter,
+  ]
+)
 
 SimpleCov.start do
-    add_group "gem", "lib"
-    add_group "spec", "spec"
+  add_group "gem", "lib"
+  add_group "spec", "spec"
 end
 
 require 'poparser'

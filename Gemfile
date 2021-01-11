@@ -3,7 +3,8 @@
 source 'https://rubygems.org'
 
 group :test do
-  gem 'coveralls', require: false
+  gem 'simplecov',      require: false
+  gem 'simplecov-lcov', require: false
   gem 'rspec', '~> 3.9'
   gem 'awesome_print'
 end
