@@ -103,7 +103,7 @@ describe PoParser::Entry do
       @entry.flag = 'fuzzy'
       @entry.msgid = ['first line', 'second line']
       @entry.msgstr = ['first line', 'second line']
-      result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
+      result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr[0] \"first line\"\nmsgstr[1] \"second line\"\n"
       expect(@entry.to_s).to eq(result)
     end
   end

@@ -20,6 +20,9 @@ module PoParser
 
       if @value.is_a? Array
         remove_empty_line
+        # special case for plural strings
+        return msgstr_plural_to_s if label == 'msgstr'
+
         # multiline messages should be started with an empty line
         lines = ["#{label} \"\"\n"]
         @value.each do |str|
@@ -45,6 +48,14 @@ module PoParser
       if @value.is_a? Array
         @value.shift if @value.first == ''
       end
+    end
+
+    def msgstr_plural_to_s
+      lines = []
+      @value.each_with_index do |str, index|
+        lines << "msgstr[#{index}] \"#{str}\"\n"
+      end
+      lines.join
     end
 
     def label

@@ -15,16 +15,27 @@ describe PoParser::Po do
     @po = PoParser::Po.new
   end
 
-  it 'should output the po to a sting correctly' do
+  it 'should output the po to a string correctly' do
     @po << {
       translator_comment: ['comment', 'another comment line'],
       reference: 'reference comment',
       msgid: 'untranslated',
       msgstr: 'translated string'
     }
+    @po << {
+      msgid_plural: 'phrase',
+      'msgstr[0]': 'phrase',
+      'msgstr[1]': 'phrases',
+    }
+    @po << {
+      msgid_plural: 'word',
+      msgstr: %w[word words]
+    }
+    entry_1 = "# comment\n# another comment line\n#: reference comment\nmsgid \"untranslated\"\nmsgstr \"translated string\"\n"
+    entry_2 = "msgid_plural \"phrase\"\nmsgstr[0] \"phrase\"\nmsgstr[1] \"phrases\"\n"
+    entry_3 = "msgid_plural \"word\"\nmsgstr[0] \"word\"\nmsgstr[1] \"words\"\n"
 
-    expected = "# comment\n# another comment line\n#: reference comment\nmsgid \"untranslated\"\nmsgstr \"translated string\"\n"
-    expect(@po.to_s).to eq(expected)
+    expect(@po.to_s).to eq(entry_1 + "\n" + entry_2 + "\n" + entry_3)
   end
 
   it 'should be able to add an entry to Po' do
