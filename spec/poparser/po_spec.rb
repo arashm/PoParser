@@ -15,6 +15,18 @@ describe PoParser::Po do
     @po = PoParser::Po.new
   end
 
+  it 'should output the po to a sting correctly' do
+    @po << {
+      translator_comment: ['comment', 'another comment line'],
+      reference: 'reference comment',
+      msgid: 'untranslated',
+      msgstr: 'translated string'
+    }
+
+    expected = "# comment\n# another comment line\n#: reference comment\nmsgid \"untranslated\"\nmsgstr \"translated string\"\n"
+    expect(@po.to_s).to eq(expected)
+  end
+
   it 'should be able to add an entry to Po' do
     # << is an alias for Po#add
     expect(@po << entry).to be_a_kind_of PoParser::Po

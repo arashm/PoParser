@@ -82,13 +82,13 @@ module PoParser
     def to_h
       instance_variables.each_with_object({}) do |label, hash|
         object = instance_variable_get(label)
+        next if object.nil?
+
         # If it's a plural msgstr
-        if object.is_a?(Array)
-          object.each do |entry|
-            hash[entry.type] = entry.to_s unless entry.nil?
-          end
+        if object.value.is_a?(Array)
+          hash[object.type] = object.value.compact
         else
-          hash[object.type] = object.to_s unless object.nil?
+          hash[object.type] = object.to_s
         end
       end
     end

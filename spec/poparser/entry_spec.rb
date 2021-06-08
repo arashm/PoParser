@@ -23,10 +23,29 @@ describe PoParser::Entry do
     }.to raise_error(ArgumentError, "Unknown label blah_blah")
   end
 
-  it 'should show a hash presentation of a entry' do
+  it 'should show a hash presentation of an entry' do
     @entry.msgid = 'string'
     @entry.msgstr = 'reshte'
-    expect(@entry.to_h).to eq({:msgid=>"string", :msgstr=>"reshte"})
+    @entry.translator_comment = ['comment', 'second line of comments']
+    result = {
+      :translator_comment => ['comment', 'second line of comments'],
+      :msgid => 'string',
+      :msgstr => 'reshte'
+    }
+    expect(@entry.to_h).to eq(result)
+  end
+
+  it 'should show a hash presentation of a plural string entry' do
+    @entry = PoParser::Entry.new
+    @entry.msgid_plural = 'word'
+    @entry.msgstr = %w[mot mots]
+    @entry.translator_comment = ['comment', 'second line of comments']
+    result = {
+      :translator_comment => ['comment', 'second line of comments'],
+      :msgid_plural => 'word',
+      :msgstr => %w[mot mots]
+    }
+    expect(@entry.to_h).to eq(result)
   end
 
   it 'should translate the entry' do
