@@ -37,13 +37,16 @@ describe PoParser::Entry do
 
   it 'should show a hash presentation of a plural string entry' do
     @entry = PoParser::Entry.new
-    @entry.msgid_plural = 'word'
-    @entry.msgstr = %w[mot mots]
+    @entry.msgid_plural = 'right word'
+    @entry.msgstr_0 = %w[mot juste]
+    @entry.msgstr_1 = %w[mots justes]
     @entry.translator_comment = ['comment', 'second line of comments']
+
     result = {
       :translator_comment => ['comment', 'second line of comments'],
-      :msgid_plural => 'word',
-      :msgstr => %w[mot mots]
+      :msgid_plural => 'right word',
+      :'msgstr[0]' => %w[mot juste],
+      :'msgstr[1]' => %w[mots justes]
     }
     expect(@entry.to_h).to eq(result)
   end
@@ -103,7 +106,7 @@ describe PoParser::Entry do
       @entry.flag = 'fuzzy'
       @entry.msgid = ['first line', 'second line']
       @entry.msgstr = ['first line', 'second line']
-      result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr[0] \"first line\"\nmsgstr[1] \"second line\"\n"
+      result = "#, fuzzy\nmsgid \"\"\n\"first line\"\n\"second line\"\nmsgstr \"\"\n\"first line\"\n\"second line\"\n"
       expect(@entry.to_s).to eq(result)
     end
   end

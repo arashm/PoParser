@@ -28,12 +28,12 @@ describe PoParser::Po do
       'msgstr[1]': 'phrases',
     }
     @po << {
-      msgid_plural: 'word',
-      msgstr: %w[word words]
+      msgid: 'multiline word',
+      msgstr: %w[line1 line2]
     }
     entry_1 = "# comment\n# another comment line\n#: reference comment\nmsgid \"untranslated\"\nmsgstr \"translated string\"\n"
     entry_2 = "msgid_plural \"phrase\"\nmsgstr[0] \"phrase\"\nmsgstr[1] \"phrases\"\n"
-    entry_3 = "msgid_plural \"word\"\nmsgstr[0] \"word\"\nmsgstr[1] \"words\"\n"
+    entry_3 = "msgid \"multiline word\"\nmsgstr \"\"\n\"line1\"\n\"line2\"\n"
 
     expect(@po.to_s).to eq(entry_1 + "\n" + entry_2 + "\n" + entry_3)
   end
