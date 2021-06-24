@@ -145,6 +145,5 @@ describe PoParser::Entry do
       )
       expect(obsolete_entry.previous_msgid_plural.value).to eq('previous msgid_plural')
     end
-
   end
 end

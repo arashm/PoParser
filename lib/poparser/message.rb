@@ -2,49 +2,54 @@
 
 module PoParser
   class Message
-    attr_accessor :type, :value
+    attr_accessor :type
 
     def initialize(type, value)
       @type = type
-      @value = value
+      @value = value.is_a?(Array) ? value : value.split("\\n")
 
       remove_empty_line
     end
 
-    def str
-      @value.is_a?(Array) ? @value.join : @value
+    def value=(val)
+      @value = val.is_a?(Array) ? val : val.split("\\n")
     end
+
+    def value
+      return @value if plural?
+
+      @value.join
+    end
+    alias to_str value
+
+    def str
+      @value.join
+    end
+    alias inspect str
 
     def to_s(with_label = false)
       return to_str unless with_label
 
-      if @value.is_a? Array
+      if plural?
         remove_empty_line
+        lines = []
         # multiline messages should be started with an empty line
-        lines = ["#{label} \"\"\n"]
+        lines.push("#{label} \"\"\n")
         @value.each do |str|
           lines << "\"#{str}\"\n"
         end
         return lines.join
-      else
-        "#{label} \"#{@value}\"\n"
       end
-    end
 
-    def to_str
-      @value.is_a?(Array) ? @value.join : @value
-    end
-
-    def inspect
-      @value
+      "#{label} \"#{@value.join}\"\n"
     end
 
   private
 
     def remove_empty_line
-      if @value.is_a? Array
-        @value.shift if @value.first == ''
-      end
+      return unless plural? && @value.first.empty?
+
+      @value.shift
     end
 
     def label
@@ -53,6 +58,10 @@ module PoParser
       else
         ENTRIES_LABELS[@type]
       end
+    end
+
+    def plural?
+      @value.size > 1
     end
   end
 end

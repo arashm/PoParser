@@ -8,6 +8,7 @@
 require 'simplecov'
 require 'simplecov-lcov'
 require 'awesome_print'
+require 'pry'
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
