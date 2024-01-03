@@ -25,7 +25,7 @@ module PoParser
         @value.each do |str|
           lines << "\"#{str}\"\n"
         end
-        return lines.join
+        lines.join
       else
         "#{label} \"#{@value}\"\n"
       end
@@ -42,9 +42,9 @@ module PoParser
   private
 
     def remove_empty_line
-      if @value.is_a? Array
-        @value.shift if @value.first == ''
-      end
+      return unless @value.is_a?(Array)
+
+      @value.shift if @value.first == ''
     end
 
     def label

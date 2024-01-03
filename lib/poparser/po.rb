@@ -151,10 +151,8 @@ module PoParser
       File.open(@path, 'w') { |file| file.write(to_s) }
     end
 
-    def each
-      @entries.each do |entry|
-        yield entry
-      end
+    def each(&block)
+      @entries.each(&block)
     end
 
     def inspect
@@ -185,13 +183,11 @@ module PoParser
       self
     end
 
-    # rubocop:disable Style/SafeNavigation
     def add_entry(entry)
       return add_header_entry(entry) if entry[:msgid] && entry[:msgid].empty?
 
       @entries << Entry.new(entry)
     end
-    # rubocop:enable Style/SafeNavigation
 
     def add_header_entry(entry)
       raise('Duplicate entry, header was already instantiated') if @header

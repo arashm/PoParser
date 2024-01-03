@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.3
   Exclude:
   - 'spec/**/*'
   - 'bin/*'
@@ -18,16 +18,14 @@ Layout/MultilineMethodCallIndentation:
 Layout/AccessModifierIndentation:
   EnforcedStyle: outdent
 
-Layout/AlignParameters:
+Metrics/MethodLength:
+  Enabled: false
+
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
 
 Style/FrozenStringLiteralComment:
   Enabled: true
-
-Style/PercentLiteralDelimiters:
-  PreferredDelimiters:
-    '%i': '()'
-    '%w': '()'
 
 Style/TrailingCommaInArrayLiteral:
   Enabled: true
@@ -41,9 +39,12 @@ Style/TrailingCommaInArguments:
   Enabled: true
   EnforcedStyleForMultiline: comma
 
+Style/OptionalBooleanParameter:
+  Enabled: false
+
 Layout/EmptyLines:
   Enabled: true
 
 Metrics/LineLength:
-  Max: 100
+  Max: 120
   IgnoreCopDirectives: True

@@ -19,22 +19,20 @@ module PoParser
         if /^previous_/.match?(@type.to_s) # these behave more like messages
           string = ["#{COMMENTS_LABELS[@type]} \"\"\n"]
           @value.each do |str|
-            string << "#| \"#{str}\"\n".gsub(/[\p{Blank}]+$/, '')
+            string << "#| \"#{str}\"\n".gsub(/\p{Blank}+$/, '')
           end
         else
           string = []
           @value.each do |str|
-            string << "#{COMMENTS_LABELS[@type]} #{str}\n".gsub(/[\p{Blank}]+$/, '')
+            string << "#{COMMENTS_LABELS[@type]} #{str}\n".gsub(/\p{Blank}+$/, '')
           end
         end
-        return string.join
+        string.join
+      elsif /^previous_/.match?(@type.to_s)
+        "#{COMMENTS_LABELS[@type]} \"#{@value}\"\n".gsub(/\p{Blank}+$/, '') # these behave more like messages
       else
-        if /^previous_/.match?(@type.to_s) # these behave more like messages
-          "#{COMMENTS_LABELS[@type]} \"#{@value}\"\n".gsub(/[\p{Blank}]+$/, '')
-        else
-          # removes the space but not newline at the end
-          "#{COMMENTS_LABELS[@type]} #{@value}\n".gsub(/[\p{Blank}]+$/, '')
-        end
+        # removes the space but not newline at the end
+        "#{COMMENTS_LABELS[@type]} #{@value}\n".gsub(/\p{Blank}+$/, '')
       end
     end
 
