@@ -17,7 +17,9 @@ module PoParser
     msgid: 'msgid',
     msgid_plural: 'msgid_plural',
     msgstr: 'msgstr',
-  }.freeze
+  }
+  (0..9).to_a.each { |index| ENTRIES_LABELS["msgstr_#{index}".to_sym] = "msgstr[#{index}]" }
+  ENTRIES_LABELS.freeze
 
   LABELS = COMMENTS_LABELS.merge(ENTRIES_LABELS).keys
 
