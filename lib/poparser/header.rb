@@ -5,8 +5,10 @@ module PoParser
   class Header
     attr_reader :entry, :original_configs, :flag
     attr_accessor :comments, :pot_creation_date, :po_revision_date, :project_id,
-                  :report_to, :report_msgid_bugs_to, :last_translator, :team, :language, :charset,
+                  :report_to, :last_translator, :team, :language, :charset,
                   :encoding, :plural_forms
+
+    alias report_msgid_bugs_to report_to
 
     def initialize(entry)
       @entry            = entry

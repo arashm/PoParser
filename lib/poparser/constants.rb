@@ -25,7 +25,7 @@ module PoParser
     pot_creation_date: 'POT-Creation-Date',
     po_revision_date: 'PO-Revision-Date',
     project_id: 'Project-Id-Version',
-    report_to: 'Project-Id-Version',
+    report_to: 'Report-Msgid-Bugs-To',
     last_translator: 'Last-Translator',
     team: 'Language-Team',
     language: 'Language',

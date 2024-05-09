@@ -26,6 +26,20 @@ describe PoParser::Header do
     end
   end
 
+  it 'returns correct values for labels' do
+    expect(@header.project_id).to eq('gnome-shell-extensions gnome-3-0')
+    expect(@header.report_to).to eq('http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-shell&keywords=I18N+L10N&component=extensions')
+    expect(@header.report_msgid_bugs_to).to eq('http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-shell&keywords=I18N+L10N&component=extensions')
+    expect(@header.pot_creation_date).to eq('2014-08-28 07:40+0000')
+    expect(@header.po_revision_date).to eq('2014-08-28 19:59+0430')
+    expect(@header.last_translator).to eq('Arash Mousavi <mousavi.arash@gmail.com>')
+    expect(@header.team).to eq('Persian <>')
+    expect(@header.language).to eq('fa_IR')
+    expect(@header.charset).to eq('text/plain; charset=UTF-8')
+    expect(@header.encoding).to eq('8bit')
+    expect(@header.plural_forms).to eq('nplurals=1; plural=0;')
+  end
+
   it 'should convert configs to hash' do
     expect(@header.original_configs).to eq(
       {"Project-Id-Version"=>"gnome-shell-extensions gnome-3-0", "Report-Msgid-Bugs-To"=>"http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-shell&keywords=I18N+L10N&component=extensions", "POT-Creation-Date"=>"2014-08-28 07:40+0000", "PO-Revision-Date"=>"2014-08-28 19:59+0430", "Last-Translator"=>"Arash Mousavi <mousavi.arash@gmail.com>", "Language-Team"=>"Persian <>", "Language"=>"fa_IR", "MIME-Version"=>"1.0", "Content-Type"=>"text/plain; charset=UTF-8", "Content-Transfer-Encoding"=>"8bit", "X-Poedit-SourceCharset"=>"utf-8", "X-Generator"=>"Gtranslator 2.91.6", "Plural-Forms"=>"nplurals=1; plural=0;"}
