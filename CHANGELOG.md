@@ -1,4 +1,4 @@
-3.2.7 / 2024-05-09
+3.2.8 / 2024-05-09
 ==================
 
   * Add Report-Msgid-Bugs-To header attribute
