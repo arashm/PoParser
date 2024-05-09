@@ -6,7 +6,7 @@
 3.2.6 / 2022-04-24
 ==================
 
-  * Add Report-Msgid-Bugs-To header attribute
+  * Update simple_po_parser version to 1.1.6 (#29) Courtesy of @dfherr
 
 3.2.5 / 2021-01-11
 ==================
