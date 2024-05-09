@@ -233,6 +233,7 @@ You can get and set following variables from `header`:
   po_revision_date
   project_id
   report_to
+  report_msgid_bugs_to
   last_translator
   team
   language
