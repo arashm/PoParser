@@ -1,3 +1,19 @@
+3.2.7 / 2024-05-09
+==================
+
+  * Add Report-Msgid-Bugs-To header attribute
+
+3.2.6 / 2022-04-24
+==================
+
+  * Add Report-Msgid-Bugs-To header attribute
+
+3.2.5 / 2021-01-11
+==================
+
+  * Dependency updates
+  * Remove support for Ruby 2.4
+
 3.2.4 / 2019-10-12
 ==================
 
