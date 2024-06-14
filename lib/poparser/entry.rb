@@ -82,13 +82,13 @@ module PoParser
     def to_h
       instance_variables.each_with_object({}) do |label, hash|
         object = instance_variable_get(label)
-        # If it's a plural msgstr
-        if object.is_a?(Array)
-          object.each do |entry|
-            hash[entry.type] = entry.to_s unless entry.nil?
-          end
+        next if object.nil?
+
+        # If it's a multiline message/comment
+        if object.value.is_a?(Array)
+          hash[object.type] = object.value.compact
         else
-          hash[object.type] = object.to_s unless object.nil?
+          hash[object.type] = object.to_s
         end
       end
     end
@@ -120,9 +120,8 @@ module PoParser
       elsif ENTRIES_LABELS.include? name
         instance_variable_set "@#{name}".to_sym, Message.new(name, value)
       elsif /^msgstr\[[0-9]\]/.match?(name.to_s)
-        # If it's a plural msgstr
-        @msgstr ||= []
-        @msgstr << Message.new(name, value)
+        # If it's a plural msgstr, change instance variable name to @msgstr_n as @msgstr[n] is not a valid variable name
+        instance_variable_set "@msgstr_#{plural_form(name)}".to_sym, Message.new(name, value)
       end
     end
 
@@ -142,6 +141,10 @@ module PoParser
           klass       = instance_variable_get "@#{type}".to_sym
           klass.type  = type
           klass.value = val
+        elsif type.match(/^msgstr_\d/)
+          plural_form = type.to_s.scan(/^msgstr_(\d)/).last.first.to_i
+          object_type = "msgstr[#{plural_form}]".to_sym
+          instance_variable_set "@#{type}".to_sym, object.new(object_type, val)
         else
           instance_variable_set "@#{type}".to_sym, object.new(type, val)
         end
@@ -198,6 +201,10 @@ module PoParser
       # alias for backward compatibility of this typo
       self.class.send(:alias_method, :refrence, :reference)
       self.class.send(:alias_method, :refrence=, :reference=)
+    end
+
+    def plural_form(name)
+      name.to_s.scan(/^msgstr\[([0-9])\]/).last.first.to_i
     end
   end
 end

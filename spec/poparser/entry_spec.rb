@@ -23,10 +23,33 @@ describe PoParser::Entry do
     }.to raise_error(ArgumentError, "Unknown label blah_blah")
   end
 
-  it 'should show a hash presentation of a entry' do
+  it 'should show a hash presentation of an entry' do
     @entry.msgid = 'string'
     @entry.msgstr = 'reshte'
     expect(@entry.to_h).to eq({:msgid=>"string", :msgstr=>"reshte"})
+  end
+
+  it 'should show a hash representation of a complex entry' do
+    # Ensure the to_h method is reversible
+    # From SimplePoParser::Parser - https://github.com/experteer/simple_po_parser/blob/v1.1.5/spec/simple_po_parser/parser_spec.rb#L31
+    entry_hash = {
+      :translator_comment => ["translator-comment", ""],
+      :extracted_comment => "extract",
+      :reference => ["reference1", "reference2"],
+      :flag => "flag",
+      :previous_msgctxt => "previous context",
+      :previous_msgid => ["", "multiline\\n", "previous messageid"],
+      :previous_msgid_plural => "previous msgid_plural",
+      :msgctxt => "Context",
+      :msgid => "msgid",
+      :msgid_plural => ["", "multiline msgid_plural\\n", ""],
+      "msgstr[0]" => "msgstr 0",
+      "msgstr[1]" => ["", "msgstr 1 multiline 1\\n", "msgstr 1 line 2\\n"],
+      "msgstr[2]" => "msgstr 2"
+    }
+
+    entry = PoParser::Entry.new(entry_hash)
+    expect(entry.to_h).to eq(entry_hash)
   end
 
   it 'should translate the entry' do
