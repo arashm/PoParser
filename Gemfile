@@ -7,6 +7,7 @@ group :test do
   gem 'simplecov-lcov', require: false
   gem 'rspec', '~> 3.9'
   gem 'awesome_print'
+  gem 'benchmark'
 end
 
 group :development do
